@@ -33,4 +33,4 @@ build/
 .vscode/
 
 ### JSON ###
-yelp_academic_dataset_business.json
+*.json
