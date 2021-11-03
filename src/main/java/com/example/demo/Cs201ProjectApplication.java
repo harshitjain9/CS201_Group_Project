@@ -4,7 +4,6 @@ import java.io.*;
 import java.util.*;
 import java.lang.*;
 
-
 import org.json.simple.*;
 import org.json.simple.parser.*;
 
@@ -26,9 +25,7 @@ public class Cs201ProjectApplication {
 		// Haversine formula
 		double dlon = lon2 - lon1;
 		double dlat = lat2 - lat1;
-		double a = Math.pow(Math.sin(dlat / 2), 2)
-		+ Math.cos(lat1) * Math.cos(lat2)
-		* Math.pow(Math.sin(dlon / 2),2);
+		double a = Math.pow(Math.sin(dlat / 2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(dlon / 2), 2);
 
 		double c = 2 * Math.asin(Math.sqrt(a));
 
@@ -37,12 +34,10 @@ public class Cs201ProjectApplication {
 		double r = 6371;
 
 		// calculate the result
-		return(c * r);
+		return (c * r);
 	}
 
-
-	public static void main(String[] args) {
-//		SpringApplication.run(Cs201ProjectApplication.class, args);
+	public static void linearSearch() {
 		Scanner scanner = new Scanner(System.in);
 		System.out.println("Enter the latitude value: ");
 		double inputLatitude = Double.parseDouble(scanner.nextLine());
@@ -51,14 +46,13 @@ public class Cs201ProjectApplication {
 		System.out.println("Enter the category: ");
 		String inputCategory = scanner.nextLine();
 		// System.exit(0);
-	    JSONParser parser = new JSONParser();
+		JSONParser parser = new JSONParser();
 		String line;
 		double minimumDistance = Double.MAX_VALUE;
 		String resultName = "";
 		String resultAddress = "";
 		try (BufferedReader reader = new BufferedReader(new FileReader("./yelp_academic_dataset_business.json"))) {
-
-			while ((line = reader.readLine()) != null) {     
+			while ((line = reader.readLine()) != null) {
 				JSONObject jsonObject = (JSONObject) parser.parse(line);
 				double latitude = (double) jsonObject.get("latitude");
 				double longitude = (double) jsonObject.get("longitude");
@@ -73,18 +67,12 @@ public class Cs201ProjectApplication {
 				}
 				double currentDistance = distance(latitude, longitude, inputLatitude, inputLongitude);
 				boolean containsCategory = Arrays.stream(categoriesArray).anyMatch(inputCategory::equals);
-				if ( containsCategory && (currentDistance < minimumDistance)) {
+				if (containsCategory && (currentDistance < minimumDistance)) {
 					minimumDistance = currentDistance;
 					resultName = name;
 					resultAddress = address;
 				}
-
-				// System.out.println("Latitude: " + String.valueOf(latitude));
-				// System.out.println("Longitude: " + String.valueOf(longitude));
-				// System.out.println("Name: " +  name);
-				// System.out.println("Address: " + address);
-				// System.out.println("Categories: " + Arrays.toString(categoriesArray));
-			  }
+			}
 
 			System.out.println("Name: " + resultName);
 			System.out.println("Address: " + resultAddress);
@@ -95,25 +83,326 @@ public class Cs201ProjectApplication {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-
+		scanner.close();
 	}
+
+    public static void spacePartitioning() {
+        Scanner scanner = new Scanner(System.in);
+		System.out.println("Enter the latitude value: ");
+		double inputLatitude = Double.parseDouble(scanner.nextLine());
+		System.out.println("Enter the longitude value: ");
+		double inputLongitude = Double.parseDouble(scanner.nextLine());
+		System.out.println("Enter the category: ");
+		String inputCategory = scanner.nextLine();
+		JSONParser parser = new JSONParser();
+		String line;
+		int numpoints = 160585;
+		KDTree kdt = new KDTree(numpoints);
+		double x[] = new double[2];
+
+		try (BufferedReader reader = new BufferedReader(new FileReader("./yelp_academic_dataset_business.json"))) {
+			while ((line = reader.readLine()) != null) {
+				JSONObject jsonObject = (JSONObject) parser.parse(line);
+				double latitude = (double) jsonObject.get("latitude");
+				double longitude = (double) jsonObject.get("longitude");
+				String name = (String) jsonObject.get("name");
+				String address = (String) jsonObject.get("address");
+				String categoriesString = (String) jsonObject.get("categories");
+				String[] categoriesArray = {};
+				try {
+					categoriesArray = categoriesString.split(", ");
+				} catch (NullPointerException e) {
+					continue;
+				}
+				boolean containsCategory = Arrays.stream(categoriesArray).anyMatch(inputCategory::equals);
+				if (containsCategory) {
+					x[0] = latitude;
+				    x[1] = longitude;
+				    kdt.add(x);
+				}
+				
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		double s[] = { inputLatitude, inputLongitude };
+        KDNode kdn = kdt.find_nearest(s);
+        System.out.println("The nearest neighbor is: ");
+        System.out.println("(" + kdn.x[0] + " , " + kdn.x[1] + ")");
+        
+    }
+ 
+	public static void main(String[] args) {
+//		SpringApplication.run(Cs201ProjectApplication.class, args);
+		spacePartitioning();
+	}	
 
 }
 
-// try {
-// 	Object obj = parser.parse(new FileReader("./yelp_academic_dataset_business.json"));
-	
-// //	         JSONObject jsonObject = (JSONObject)obj;
-// //	         String name = (String)jsonObject.get("Name");
-// //	         String course = (String)jsonObject.get("Course");
-// //	         JSONArray subjects = (JSONArray)jsonObject.get("Subjects");
-// //	         System.out.println("Name: " + name);
-// //	         System.out.println("Course: " + course);
-// //	         System.out.println("Subjects:");
-// //	         Iterator iterator = subjects.iterator();
-// //	         while (iterator.hasNext()) {
-// //	            System.out.println(iterator.next());
-// //	         }
-//  } catch(Exception e) {
-// 	e.printStackTrace();
-//  }
+class KDTree
+{
+    KDNode Root;
+ 
+    int TimeStart, TimeFinish;
+    int CounterFreq;
+ 
+    double d_min;
+    KDNode nearest_neighbour;
+ 
+    int KD_id;
+ 
+    int nList;
+ 
+    KDNode CheckedNodes[];
+    int checked_nodes;
+    KDNode List[];
+ 
+    double x_min[], x_max[];
+    boolean max_boundary[], min_boundary[];
+    int n_boundary;
+ 
+    public KDTree(int i)
+    {
+        Root = null;
+        KD_id = 1;
+        nList = 0;
+        List = new KDNode[i];
+        CheckedNodes = new KDNode[i];
+        max_boundary = new boolean[2];
+        min_boundary = new boolean[2];
+        x_min = new double[2];
+        x_max = new double[2];
+    }
+ 
+    public boolean add(double[] x)
+    {
+        if (nList >= 2000000 - 1)
+            return false; // can't add more points
+ 
+        if (Root == null)
+        {
+            Root = new KDNode(x, 0);
+            Root.id = KD_id++;
+            List[nList++] = Root;
+        } else
+        {
+            KDNode pNode;
+            if ((pNode = Root.Insert(x)) != null)
+            {
+                pNode.id = KD_id++;
+                List[nList++] = pNode;
+            }
+        }
+ 
+        return true;
+    }
+ 
+    public KDNode find_nearest(double[] x)
+    {
+        if (Root == null)
+            return null;
+ 
+        checked_nodes = 0;
+        KDNode parent = Root.FindParent(x);
+        nearest_neighbour = parent;
+        d_min = Root.distance2(x, parent.x, 2);
+        ;
+ 
+        if (parent.equal(x, parent.x, 2) == true)
+            return nearest_neighbour;
+ 
+        search_parent(parent, x);
+        uncheck();
+ 
+        return nearest_neighbour;
+    }
+ 
+    public void check_subtree(KDNode node, double[] x)
+    {
+        if ((node == null) || node.checked)
+            return;
+ 
+        CheckedNodes[checked_nodes++] = node;
+        node.checked = true;
+        set_bounding_cube(node, x);
+ 
+        int dim = node.axis;
+        double d = node.x[dim] - x[dim];
+ 
+        if (d * d > d_min)
+        {
+            if (node.x[dim] > x[dim])
+                check_subtree(node.Left, x);
+            else
+                check_subtree(node.Right, x);
+        } else
+        {
+            check_subtree(node.Left, x);
+            check_subtree(node.Right, x);
+        }
+    }
+ 
+    public void set_bounding_cube(KDNode node, double[] x)
+    {
+        if (node == null)
+            return;
+        int d = 0;
+        double dx;
+        for (int k = 0; k < 2; k++)
+        {
+            dx = node.x[k] - x[k];
+            if (dx > 0)
+            {
+                dx *= dx;
+                if (!max_boundary[k])
+                {
+                    if (dx > x_max[k])
+                        x_max[k] = dx;
+                    if (x_max[k] > d_min)
+                    {
+                        max_boundary[k] = true;
+                        n_boundary++;
+                    }
+                }
+            } else
+            {
+                dx *= dx;
+                if (!min_boundary[k])
+                {
+                    if (dx > x_min[k])
+                        x_min[k] = dx;
+                    if (x_min[k] > d_min)
+                    {
+                        min_boundary[k] = true;
+                        n_boundary++;
+                    }
+                }
+            }
+            d += dx;
+            if (d > d_min)
+                return;
+ 
+        }
+ 
+        if (d < d_min)
+        {
+            d_min = d;
+            nearest_neighbour = node;
+        }
+    }
+ 
+    public KDNode search_parent(KDNode parent, double[] x)
+    {
+        for (int k = 0; k < 2; k++)
+        {
+            x_min[k] = x_max[k] = 0;
+            max_boundary[k] = min_boundary[k] = false; //
+        }
+        n_boundary = 0;
+ 
+        KDNode search_root = parent;
+        while (parent != null && (n_boundary != 2 * 2))
+        {
+            check_subtree(parent, x);
+            search_root = parent;
+            parent = parent.Parent;
+        }
+ 
+        return search_root;
+    }
+ 
+    public void uncheck()
+    {
+        for (int n = 0; n < checked_nodes; n++)
+            CheckedNodes[n].checked = false;
+    }
+ 
+}
+
+class KDNode
+{
+    int axis;
+    double[] x;
+    int id;
+    boolean checked;
+    boolean orientation;
+ 
+    KDNode Parent;
+    KDNode Left;
+    KDNode Right;
+ 
+    public KDNode(double[] x0, int axis0)
+    {
+        x = new double[2];
+        axis = axis0;
+        for (int k = 0; k < 2; k++)
+            x[k] = x0[k];
+ 
+        Left = Right = Parent = null;
+        checked = false;
+        id = 0;
+    }
+ 
+    public KDNode FindParent(double[] x0)
+    {
+        KDNode parent = null;
+        KDNode next = this;
+        int split;
+        while (next != null)
+        {
+            split = next.axis;
+            parent = next;
+            if (x0[split] > next.x[split])
+                next = next.Right;
+            else
+                next = next.Left;
+        }
+        return parent;
+    }
+ 
+    public KDNode Insert(double[] p)
+    {
+        //x = new double[2];
+        KDNode parent = FindParent(p);
+        if (equal(p, parent.x, 2) == true)
+            return null;
+ 
+        KDNode newNode = new KDNode(p, parent.axis + 1 < 2 ? parent.axis + 1
+                : 0);
+        newNode.Parent = parent;
+ 
+        if (p[parent.axis] > parent.x[parent.axis])
+        {
+            parent.Right = newNode;
+            newNode.orientation = true; //
+        } else
+        {
+            parent.Left = newNode;
+            newNode.orientation = false; //
+        }
+ 
+        return newNode;
+    }
+ 
+    boolean equal(double[] x1, double[] x2, int dim)
+    {
+        for (int k = 0; k < dim; k++)
+        {
+            if (x1[k] != x2[k])
+                return false;
+        }
+ 
+        return true;
+    }
+ 
+    double distance2(double[] x1, double[] x2, int dim)
+    {
+        double S = 0;
+        for (int k = 0; k < dim; k++)
+            S += (x1[k] - x2[k]) * (x1[k] - x2[k]);
+        return S;
+    }
+}
