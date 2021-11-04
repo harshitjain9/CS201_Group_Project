@@ -5,22 +5,16 @@ public class Business {
 
     private String address;
 
-    private double latitude;
-
-    private double longitude;
-
-    //private String[] categories;
+    private double[] coordinates;
 
     public Business() {
 
     }
     
-    public Business(String name, String address, double latitude, double longitude) {
+    public Business(String name, String address, double[] coordinates) {
         this.name = name;
         this.address = address;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        //this.categories = categories;
+        this.coordinates = coordinates;
     }
 
     public String getName() {
@@ -31,15 +25,8 @@ public class Business {
         return address;
     }
 
-    public double getLatitude() {
-        return latitude;
+    public double[] getCoordinates() {
+        return coordinates;
     }
 
-    public double getLongitude() {
-        return longitude;
-    }
-
-    // public String[] getCategories() {
-    //     return categories;
-    // }
 }
