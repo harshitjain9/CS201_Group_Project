@@ -1,6 +1,7 @@
 package com.example.demo.KD;
 
 import com.example.demo.Business;
+import com.example.demo.Distance;
 
 public class KDNode
 {
@@ -33,7 +34,7 @@ public class KDNode
         {
             split = next.axis;
             parent = next;
-            if (x0[split] > next.x[split])
+            if (x0.getCoordinates()[split] > next.x.getCoordinates()[split])
                 next = next.Right;
             else
                 next = next.Left;
@@ -52,7 +53,7 @@ public class KDNode
                 : 0);
         newNode.Parent = parent;
  
-        if (p[parent.axis] > parent.x[parent.axis])
+        if (p.getCoordinates()[parent.axis] > parent.x.getCoordinates()[parent.axis])
         {
             parent.Right = newNode;
             newNode.orientation = true; //
@@ -67,7 +68,12 @@ public class KDNode
  
     boolean equal(Business x1, Business x2, int dim)
     {
-        if (!(x1.getAddr().equals(x2.getAddr())) || !(x1.getName().equals(x2.getName())) || (x1.getLatitude() != x2.getLatitude()) || x1.getLongitude() != x2.getLongitude()) {
+
+        double x1Lat = x1.getCoordinates()[0];
+        double x1Long = x1.getCoordinates()[1];
+        double x2Lat = x2.getCoordinates()[0];
+        double x2Long = x2.getCoordinates()[1];
+        if (!(x1.getAddr().equals(x2.getAddr())) || !(x1.getName().equals(x2.getName())) || (x1Lat != x2Lat) || x1Long != x2Long) {
             return true;
         }
         return false;
@@ -78,8 +84,12 @@ public class KDNode
     double distance2(Business x1, Business x2, int dim)
     {
         double S = 0;
-        S += (x1.getLatitude() - x2.getLatitude()) * (x1.getLatitude() - x2.getLatitude());
-        S += (x1.getLongitude() - x2.getLongitude()) * (x1.getLongitude() - x2.getLongitude()));
+        double x1Lat = x1.getCoordinates()[0];
+        double x1Long = x1.getCoordinates()[1];
+        double x2Lat = x2.getCoordinates()[0];
+        double x2Long = x2.getCoordinates()[1];
+        S += (x1Lat - x2Lat) * (x1Lat - x2Lat);
+        S += (x1Long - x2Long) * (x1Long - x2Long);
         return S;
     }
 }

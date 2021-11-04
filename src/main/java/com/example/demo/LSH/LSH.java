@@ -24,15 +24,9 @@ public class LSH {
 				double latitude = (double) jsonObject.get("latitude");
 				double longitude = (double) jsonObject.get("longitude");
 				String name = (String) jsonObject.get("name");
-				String address = (String) jsonObject.get("address");
-				// String categoriesString = (String) jsonObject.get("categories");
-				// String[] categoriesArray = {};
-				// try {
-				// 	categoriesArray = categoriesString.split(", ");
-				// } catch (NullPointerException e) {
-				// 	continue;
-				// }
-				allData.add(new Business(name, address, latitude, longitude));
+				String address = (String) jsonObject.get("address");		
+				double[] coordinates = {latitude, longitude};
+				allData.add(new Business(name, address, coordinates));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -48,7 +42,7 @@ public class LSH {
 
         ArrayList<double[]> vectors = new ArrayList<>();
         for (Business each:allData) {
-            double[] vector = new double[] {each.getLatitude(), each.getLongitude()};
+            double[] vector = new double[] {each.getCoordinates()[0], each.getCoordinates()[1]};
             vectors.add(vector);
         }
 

@@ -93,11 +93,11 @@ public class KDTree
         set_bounding_cube(node, x);
  
         int dim = node.axis;
-        double d = node.x[dim] - x[dim];
+        double d = node.x.getCoordinates()[dim] - x.getCoordinates()[dim];
  
         if (d * d > d_min)
         {
-            if (node.x[dim] > x[dim])
+            if (node.x.getCoordinates()[dim] > x.getCoordinates()[dim])
                 check_subtree(node.Left, x);
             else
                 check_subtree(node.Right, x);
@@ -116,7 +116,7 @@ public class KDTree
         double dx;
         for (int k = 0; k < 2; k++)
         {
-            dx = node.x[k] - x[k];
+            dx = node.x.getCoordinates()[k] - x.getCoordinates()[k];
             if (dx > 0)
             {
                 dx *= dx;
