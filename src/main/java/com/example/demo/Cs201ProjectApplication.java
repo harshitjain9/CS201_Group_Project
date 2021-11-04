@@ -6,6 +6,8 @@ import java.lang.*;
 
 import org.json.simple.*;
 import org.json.simple.parser.*;
+import org.springframework.boot.SpringApplication;
+
 import com.example.demo.KD.*;
 
 //import org.springframework.boot.SpringApplication;
@@ -39,14 +41,6 @@ public class Cs201ProjectApplication {
 	}
 
 	public static void linearSearch() {
-		Scanner scanner = new Scanner(System.in);
-		System.out.println("Enter the latitude value: ");
-		double inputLatitude = Double.parseDouble(scanner.nextLine());
-		System.out.println("Enter the longitude value: ");
-		double inputLongitude = Double.parseDouble(scanner.nextLine());
-		System.out.println("Enter the category: ");
-		String inputCategory = scanner.nextLine();
-		
 		ArrayList<Business> allData = new ArrayList<>();
 		JSONParser parser = new JSONParser();
 		String line;
@@ -57,28 +51,36 @@ public class Cs201ProjectApplication {
 				double longitude = (double) jsonObject.get("longitude");
 				String name = (String) jsonObject.get("name");
 				String address = (String) jsonObject.get("address");
-				String categoriesString = (String) jsonObject.get("categories");
-				String[] categoriesArray = {};
-				try {
-					categoriesArray = categoriesString.split(", ");
-				} catch (NullPointerException e) {
-					continue;
-				}
-				allData.add(new Business(name, address, latitude, longitude, categoriesArray));
+				// String categoriesString = (String) jsonObject.get("categories");
+				// String[] categoriesArray = {};
+				// try {
+				// 	categoriesArray = categoriesString.split(", ");
+				// } catch (NullPointerException e) {
+				// 	continue;
+				// }
+				allData.add(new Business(name, address, latitude, longitude));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		
+
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("Enter the latitude value: ");
+		double inputLatitude = Double.parseDouble(scanner.nextLine());
+		System.out.println("Enter the longitude value: ");
+		double inputLongitude = Double.parseDouble(scanner.nextLine());
+		//System.out.println("Enter the category: ");
+		//String inputCategory = scanner.nextLine();
+
 		double minimumDistance = Double.MAX_VALUE;
 		String resultName = "";
 		String resultAddress = "";
 		for (Business each:allData) {
 			double currentDistance = distance(each.getLatitude(), each.getLongitude(), inputLatitude, inputLongitude);
-			boolean containsCategory = Arrays.stream(each.getCategories()).anyMatch(inputCategory::equals);
-			if (containsCategory && (currentDistance < minimumDistance)) {
+			//boolean containsCategory = Arrays.stream(each.getCategories()).anyMatch(inputCategory::equals);
+			if (currentDistance < minimumDistance) {
 				minimumDistance = currentDistance;
 				resultName = each.getName();
 				resultAddress = each.getAddr();
@@ -142,8 +144,8 @@ public class Cs201ProjectApplication {
     }
  
 	public static void main(String[] args) {
-//		SpringApplication.run(Cs201ProjectApplication.class, args);
-		spacePartitioning();
+		SpringApplication.run(Cs201ProjectApplication.class, args);
+		linearSearch();
 	}	
 
 }

@@ -9,14 +9,14 @@ public class Business {
 
     private double longitude;
 
-    private String[] categories;
+    //private String[] categories;
 
-    public Business(String name, String address, double latitude, double longitude, String[] categories) {
+    public Business(String name, String address, double latitude, double longitude) {
         this.name = name;
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.categories = categories;
+        //this.categories = categories;
     }
 
     public String getName() {
@@ -35,7 +35,7 @@ public class Business {
         return longitude;
     }
 
-    public String[] getCategories() {
-        return categories;
-    }
+    // public String[] getCategories() {
+    //     return categories;
+    // }
 }
