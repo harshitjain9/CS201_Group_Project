@@ -61,6 +61,23 @@ public class Cs201ProjectApplication {
 		System.out.println("Minimum Distance: " + String.valueOf(kdt.find_nearest_distance()));
         
     }
+
+    public static void kdTreePresort() {
+        KdNodePresort root = LoadData.getRootKDTreePresort();
+        double[] inputCoordinates = getInputCoordinates();
+        int[] intInputCoordinates = {(int) inputCoordinates[0], (int) inputCoordinates[1]};
+        int maximumSearchDistance = 1000;
+        List<KdNodePresort> kdNodes = root.searchKdTree(intInputCoordinates, maximumSearchDistance, 0);
+        System.out.println("List of k-d nodes within " + maximumSearchDistance + "-unit search distance follows:\n");
+		for (int i = 0; i < kdNodes.size(); i++) {
+			KdNodePresort node = kdNodes.get(i);
+			KdNodePresort.printTuple(node.getPoint());
+			// double distance = Distance.distance(node.getPoint()[0], node.getPoint()[1], intInputCoordinates[0], intInputCoordinates[1]);
+            // System.out.println("Distance is " + String.valueOf(distance));
+            System.out.println("");
+		}
+        System.out.println("");
+    }
  
 	public static void main(String[] args) {
 		SpringApplication.run(Cs201ProjectApplication.class, args);
@@ -70,20 +87,26 @@ public class Cs201ProjectApplication {
         System.out.println("2: Space Partioning using KD Tree");
         System.out.println("3: Space Partioning using Balanced KD Tree- Presort");
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter the algorithm number:");
         boolean validNumber = false;
         int algorthimNumber = 1;
         while (validNumber == false) {
             try {
+                System.out.println("Enter the algorithm number:");
                 algorthimNumber = Integer.parseInt(scanner.nextLine());
-                validNumber = true;
                 if (algorthimNumber == 1) {
+                    validNumber = true;
                     linearSearch();
                 } else if (algorthimNumber == 2) {
+                    validNumber = true;
                     spacePartitioning();
+                } else if (algorthimNumber == 3) {
+                    validNumber = true;
+                    kdTreePresort();
+                } else {
+                    continue;
                 }
             } catch (NumberFormatException e) {
-                System.out.println("Please enter valid number:");
+                continue;
             } 
         } 
         scanner.close();
