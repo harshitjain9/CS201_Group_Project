@@ -31,9 +31,9 @@ public class Main {
         for () {
             graph.addNode(destinationNode);
         }
+
+        // for every location
         graph = Dijkstra.calculateShortestPathFromSource(graph, source);
-
-
     }
 
     public static double distance(double lat1, double lon1, double lat2, double lon2) {
