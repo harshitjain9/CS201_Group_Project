@@ -104,7 +104,6 @@ public class Cs201ProjectApplication {
 		String line;
 		int numpoints = 160585;
 		KDTree kdt = new KDTree(numpoints);
-		double x[] = new double[2];
 
 		try (BufferedReader reader = new BufferedReader(new FileReader("./yelp_academic_dataset_business.json"))) {
 			while ((line = reader.readLine()) != null) {
@@ -113,20 +112,20 @@ public class Cs201ProjectApplication {
 				double longitude = (double) jsonObject.get("longitude");
 				String name = (String) jsonObject.get("name");
 				String address = (String) jsonObject.get("address");
-				String categoriesString = (String) jsonObject.get("categories");
-				String[] categoriesArray = {};
-				try {
-					categoriesArray = categoriesString.split(", ");
-				} catch (NullPointerException e) {
-					continue;
-				}
-				boolean containsCategory = Arrays.stream(categoriesArray).anyMatch(inputCategory::equals);
-				if (containsCategory) {
-					x[0] = latitude;
-				    x[1] = longitude;
-				    kdt.add(x);
-				}
-				
+				// String categoriesString = (String) jsonObject.get("categories");
+				// String[] categoriesArray = {};
+				// try {
+				// 	categoriesArray = categoriesString.split(", ");
+				// } catch (NullPointerException e) {
+				// 	continue;
+				// }
+				// boolean containsCategory = Arrays.stream(categoriesArray).anyMatch(inputCategory::equals);
+				// if (containsCategory) {
+					
+				//     kdt.add(x);
+				// }
+                Business business = new Business(name, address, latitude, longitude));
+				kdt.add(business);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

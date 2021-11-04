@@ -1,5 +1,7 @@
 package com.example.demo.KD;
 
+import com.example.demo.Business;
+
 public class KDTree
 {
     KDNode Root;
@@ -35,30 +37,29 @@ public class KDTree
         x_max = new double[2];
     }
  
-    public boolean add(double[] x)
+    public boolean add(Business business)
     {
         if (nList >= 2000000 - 1)
             return false; // can't add more points
  
         if (Root == null)
         {
-            Root = new KDNode(x, 0);
+            Root = new KDNode(business, 0);
             Root.id = KD_id++;
             List[nList++] = Root;
         } else
         {
             KDNode pNode;
-            if ((pNode = Root.Insert(x)) != null)
+            if ((pNode = Root.Insert(business)) != null)
             {
                 pNode.id = KD_id++;
                 List[nList++] = pNode;
             }
         }
- 
         return true;
     }
  
-    public KDNode find_nearest(double[] x)
+    public KDNode find_nearest(Business x)
     {
         if (Root == null)
             return null;
@@ -82,7 +83,7 @@ public class KDTree
         return d_min;
     }
  
-    public void check_subtree(KDNode node, double[] x)
+    public void check_subtree(KDNode node, Business x)
     {
         if ((node == null) || node.checked)
             return;
@@ -107,7 +108,7 @@ public class KDTree
         }
     }
  
-    public void set_bounding_cube(KDNode node, double[] x)
+    public void set_bounding_cube(KDNode node, Business x)
     {
         if (node == null)
             return;
@@ -156,7 +157,7 @@ public class KDTree
         }
     }
  
-    public KDNode search_parent(KDNode parent, double[] x)
+    public KDNode search_parent(KDNode parent, Business x)
     {
         for (int k = 0; k < 2; k++)
         {

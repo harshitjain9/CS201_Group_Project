@@ -11,6 +11,10 @@ public class Business {
 
     //private String[] categories;
 
+    public Business() {
+
+    }
+    
     public Business(String name, String address, double latitude, double longitude) {
         this.name = name;
         this.address = address;

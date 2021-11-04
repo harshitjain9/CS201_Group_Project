@@ -1,9 +1,11 @@
 package com.example.demo.KD;
 
+import com.example.demo.Business;
+
 public class KDNode
 {
     int axis;
-    public double[] x;
+    public Business x;
     int id;
     boolean checked;
     boolean orientation;
@@ -12,19 +14,17 @@ public class KDNode
     KDNode Left;
     KDNode Right;
  
-    public KDNode(double[] x0, int axis0)
+    public KDNode(Business x0, int axis0)
     {
-        x = new double[2];
+        x = new Business();
         axis = axis0;
-        for (int k = 0; k < 2; k++)
-            x[k] = x0[k];
- 
+        x = x0;
         Left = Right = Parent = null;
         checked = false;
         id = 0;
     }
  
-    public KDNode FindParent(double[] x0)
+    public KDNode FindParent(Business x0)
     {
         KDNode parent = null;
         KDNode next = this;
@@ -41,7 +41,7 @@ public class KDNode
         return parent;
     }
  
-    public KDNode Insert(double[] p)
+    public KDNode Insert(Business p)
     {
         //x = new double[2];
         KDNode parent = FindParent(p);
@@ -65,22 +65,21 @@ public class KDNode
         return newNode;
     }
  
-    boolean equal(double[] x1, double[] x2, int dim)
+    boolean equal(Business x1, Business x2, int dim)
     {
-        for (int k = 0; k < dim; k++)
-        {
-            if (x1[k] != x2[k])
-                return false;
+        if (!(x1.getAddr().equals(x2.getAddr())) || !(x1.getName().equals(x2.getName())) || (x1.getLatitude() != x2.getLatitude()) || x1.getLongitude() != x2.getLongitude()) {
+            return true;
         }
+        return false;
  
-        return true;
+        
     }
  
-    double distance2(double[] x1, double[] x2, int dim)
+    double distance2(Business x1, Business x2, int dim)
     {
         double S = 0;
-        for (int k = 0; k < dim; k++)
-            S += (x1[k] - x2[k]) * (x1[k] - x2[k]);
+        S += (x1.getLatitude() - x2.getLatitude()) * (x1.getLatitude() - x2.getLatitude());
+        S += (x1.getLongitude() - x2.getLongitude()) * (x1.getLongitude() - x2.getLongitude()));
         return S;
     }
 }
