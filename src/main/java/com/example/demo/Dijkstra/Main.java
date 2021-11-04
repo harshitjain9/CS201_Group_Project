@@ -1,7 +1,7 @@
 package com.example.demo.Dijkstra;
 
 public class Main {
-    public void run(ArrayList<) {
+    public void run(ArrayList<> array) {
         // Node nodeA = new Node("A");
         
         // nodeA.addDestination(nodeB, 10);
@@ -22,10 +22,16 @@ public class Main {
 
         // link every other location in the database to the source
         for () {
-            source.addDestination(, distance);
+            source.addDestination(destination, distance);
         }
 
-
+        // add all the nodes to the graph
+        Graph graph = new Graph();
+        graph.addNode(source);
+        for () {
+            graph.addNode(destinationNode);
+        }
+        graph = Dijkstra.calculateShortestPathFromSource(graph, source);
 
 
     }
