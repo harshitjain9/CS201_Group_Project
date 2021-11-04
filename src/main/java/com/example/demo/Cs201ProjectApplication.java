@@ -46,11 +46,10 @@ public class Cs201ProjectApplication {
 		double inputLongitude = Double.parseDouble(scanner.nextLine());
 		System.out.println("Enter the category: ");
 		String inputCategory = scanner.nextLine();
+		
+		ArrayList<Business> allData = new ArrayList<>();
 		JSONParser parser = new JSONParser();
 		String line;
-		double minimumDistance = Double.MAX_VALUE;
-		String resultName = "";
-		String resultAddress = "";
 		try (BufferedReader reader = new BufferedReader(new FileReader("./yelp_academic_dataset_business.json"))) {
 			while ((line = reader.readLine()) != null) {
 				JSONObject jsonObject = (JSONObject) parser.parse(line);
@@ -65,24 +64,29 @@ public class Cs201ProjectApplication {
 				} catch (NullPointerException e) {
 					continue;
 				}
-				double currentDistance = distance(latitude, longitude, inputLatitude, inputLongitude);
-				boolean containsCategory = Arrays.stream(categoriesArray).anyMatch(inputCategory::equals);
-				if (containsCategory && (currentDistance < minimumDistance)) {
-					minimumDistance = currentDistance;
-					resultName = name;
-					resultAddress = address;
-				}
+				allData.add(new Business(name, address, latitude, longitude, categoriesArray));
 			}
-
-			System.out.println("Name: " + resultName);
-			System.out.println("Address: " + resultAddress);
-			System.out.println("Minimum Distance: " + String.valueOf(minimumDistance));
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+		
+		double minimumDistance = Double.MAX_VALUE;
+		String resultName = "";
+		String resultAddress = "";
+		for (Business each:allData) {
+			double currentDistance = distance(each.getLatitude(), each.getLongitude(), inputLatitude, inputLongitude);
+			boolean containsCategory = Arrays.stream(each.getCategories()).anyMatch(inputCategory::equals);
+			if (containsCategory && (currentDistance < minimumDistance)) {
+				minimumDistance = currentDistance;
+				resultName = each.getName();
+				resultAddress = each.getAddr();
+			}
+		}
+		System.out.println("Name: " + resultName);
+		System.out.println("Address: " + resultAddress);
+		System.out.println("Minimum Distance: " + String.valueOf(minimumDistance));
 		scanner.close();
 	}
 
