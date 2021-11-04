@@ -72,7 +72,6 @@ public class KDNode
             if (x1[k] != x2[k])
                 return false;
         }
- 
         return true;
     }
  
