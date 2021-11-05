@@ -72,6 +72,10 @@ public class Cs201ProjectApplication {
     }
 
     public static void kdTreePresort() {
+        //160585
+        //10, 100, 1000, 10000, 100000, 160585 
+
+        //amount of memory occupied by the program - find a tool
         KdNodePresort root = LoadData.getRootKDTreePresort();
         double[] inputData = getInputData();
         double[] inputCoordinates = {inputData[0], inputData[1]};
