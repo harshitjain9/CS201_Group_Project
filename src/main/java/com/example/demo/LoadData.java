@@ -5,6 +5,7 @@ import org.json.simple.*;
 import org.json.simple.parser.*;
 import com.example.demo.KD.KDTree;
 import com.example.demo.KD.KdNodePresort;
+import com.example.demo.KD.KdNodePartition;
 
 public class LoadData {
 
@@ -79,6 +80,31 @@ public class LoadData {
 			e.printStackTrace();
 		}
 		KdNodePresort root = KdNodePresort.createKdTree(allData);
+		System.out.println("Data loaded in KD Tree");
+        return root;
+    }
+
+	public static KdNodePartition getRootKDTreePartition(){
+		System.out.println("Loading data in KD Tree..");
+        ArrayList<Business> allData = new ArrayList<>();
+		JSONParser parser = new JSONParser();
+		String line;
+		try (BufferedReader reader = new BufferedReader(new FileReader("./yelp_academic_dataset_business.json"))) {
+			while ((line = reader.readLine()) != null) {
+				JSONObject jsonObject = (JSONObject) parser.parse(line);
+				double latitude = (double) jsonObject.get("latitude");
+				double longitude = (double) jsonObject.get("longitude");
+				String name = (String) jsonObject.get("name");
+				String address = (String) jsonObject.get("address");
+				double[] coordinates = {latitude, longitude};
+				allData.add(new Business(name, address, coordinates));
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		KdNodePartition root = KdNodePartition.createKdTree(allData);
 		System.out.println("Data loaded in KD Tree");
         return root;
     }
