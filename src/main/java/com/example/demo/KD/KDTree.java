@@ -212,5 +212,31 @@ public class KDTree
         for (int n = 0; n < checked_nodes; n++)
             CheckedNodes[n].checked = false;
     }
+
+    public List<KDNode> searchKdTree(final double[] query, final double cut, final int depth, KDNode node) {    
+		final int p = depth % node.x.getCoordinates().length;
+		List<KDNode> result = new ArrayList<KDNode>();
+		boolean inside = true;
+		for (int i = 0; i < node.x.getCoordinates().length; i++) {
+			if (Math.abs(query[i] - node.x.getCoordinates()[i]) > cut) {
+				inside = false;
+				break;
+			}
+		}
+		if (inside) {
+			result.add(node);
+		}
+		if (node.Left != null) {
+			if ( (query[p] - cut) <= node.Left.x.getCoordinates()[p] ) {
+				result.addAll( searchKdTree(query, cut, depth + 1, node.Left) );
+			}
+		}
+		if (node.Right != null) {
+			if ( (query[p] + cut) >= node.Right.x.getCoordinates()[p] ) {
+				result.addAll( searchKdTree(query, cut, depth + 1, node.Right) );
+			}
+		}
+		return result;
+	}
  
 }

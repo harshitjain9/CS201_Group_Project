@@ -47,7 +47,6 @@ public class KDNode
  
     public KDNode Insert(Business p)
     {
-        //x = new double[2];
         KDNode parent = FindParent(p);
         if (equal(p, parent.x, 2) == true)
             return null;
@@ -68,6 +67,7 @@ public class KDNode
  
         return newNode;
     }
+
  
     boolean equal(Business x1, Business x2, int dim)
     {
@@ -98,55 +98,5 @@ public class KDNode
 
     public double distance(double lat1, double lon1, double lat2, double lon2) {
         return Math.max(Math.abs(lat1 - lat2), Math.abs(lon1 - lon2));
-	}
-
-    public List<KDNode> searchKdTree(final double[] query, final double cut, final int depth) {
-
-		// The partition cycles as x, y, z, etc.
-		final int p = depth % x.getCoordinates().length;
-
-		// If the distance from the query node to the k-d node is within the cutoff distance
-		// in all k dimensions, add the k-d node to a list.
-		List<KDNode> result = new ArrayList<KDNode>();
-		//-------------------------------------------------------------------------------------------
-		// if (Distance.distance(business.getCoordinates()[0], business.getCoordinates()[1], query[0], query[1]) <= cut) {
-		// 	result.add(this);
-		// }
-		boolean inside = true;
-		for (int i = 0; i < x.getCoordinates().length; i++) {
-			if (Math.abs(query[i] - x.getCoordinates()[i]) > cut) {
-				inside = false;
-				break;
-			}
-		}
-		if (inside) {
-			result.add(this);
-		}
-		//-------------------------------------------------------------------------------------------
-		// Search the < branch of the k-d tree if the partition coordinate of the query point minus
-		// the cutoff distance is <= the partition coordinate of the k-d node.  The < branch must be
-		// searched when the cutoff distance equals the partition coordinate because the super key
-		// may assign a point to either branch of the tree if the sorting or partition coordinate,
-		// which forms the most significant portion of the super key, shows equality.
-		if (Left != null) {
-			if ( (query[p] - cut) <= x.getCoordinates()[p] ) {
-				result.addAll( Left.searchKdTree(query, cut, depth + 1) );
-			}
-		}
-		//point input = (5,5)
-		//point node in the kd tree = (6,1000)
-		//cutoff = 100
-
-		// Search the > branch of the k-d tree if the partition coordinate of the query point plus
-		// the cutoff distance is >= the partition coordinate of the k-d node.  The < branch must be
-		// searched when the cutoff distance equals the partition coordinate because the super key
-		// may assign a point to either branch of the tree if the sorting or partition coordinate,
-		// which forms the most significant portion of the super key, shows equality.
-		if (Right != null) {
-			if ( (query[p] + cut) >= x.getCoordinates()[p] ) {
-				result.addAll( Right.searchKdTree(query, cut, depth + 1) );
-			}
-		}
-		return result;
 	}
 }
