@@ -89,21 +89,6 @@ public class KdNodePresort {
 		gtChild = null;
 	}
 	
-	/**
-	 * <p>
-	 * The {@code initializeReference} method initializes one reference array.
-	 * </p>
-	 * 
-	 * @param coordinates - an array of (x,y,z,w...) coordinates
-	 * @param reference - an array of references to the (x,y,z,w...) coordinates
-	 * @param i - the index of the most significant coordinate in the super key
-	 */
-	private static void initializeReference(final ArrayList<Business> coordinates,
-			final ArrayList<Business> reference, final int i, final int singleReferenceCapacity) {
-		for (int j = 0; j < singleReferenceCapacity; j++) {
-			reference.set(j, coordinates.get(j));
-		}
-	}
 
 	/**
 	 * <p>

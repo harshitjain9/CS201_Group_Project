@@ -88,6 +88,20 @@ public class Cs201ProjectApplication {
         System.out.println(kdNodes.size());
         System.out.println("");
     }
+
+    public static void kdTreePartition() {
+        KdNodePartition root = LoadData.getRootKDTreePartition();
+        double[] inputData = getInputData();
+        double[] inputCoordinates = {inputData[0], inputData[1]};
+        double inputRadius = inputData[2];
+        List<KdNodePartition> kdNodes = root.searchKdTree(inputCoordinates, inputRadius, 0);
+		for (int i = 0; i < kdNodes.size(); i++) {
+			KdNodePartition node = kdNodes.get(i);
+			node.business.printBusiness(inputCoordinates);
+		}
+        System.out.println(kdNodes.size());
+        System.out.println("");
+    }
  
 	public static void main(String[] args) {
 		SpringApplication.run(Cs201ProjectApplication.class, args);
@@ -95,7 +109,8 @@ public class Cs201ProjectApplication {
         System.out.println("Number: Algorithm");
         System.out.println("1: Linear Search");
         System.out.println("2: Space Partioning using KD Tree");
-        System.out.println("3: Space Partioning using Balanced KD Tree- Presort");
+        System.out.println("3: Space Partioning using Balanced KD Tree- Partition");
+        System.out.println("4: Space Partioning using Balanced KD Tree- Presort");
         Scanner scanner = new Scanner(System.in);
         boolean validNumber = false;
         int algorthimNumber = 1;
@@ -110,6 +125,9 @@ public class Cs201ProjectApplication {
                     validNumber = true;
                     spacePartitioning();
                 } else if (algorthimNumber == 3) {
+                    validNumber = true;
+                    kdTreePartition();
+                } else if (algorthimNumber == 4) {
                     validNumber = true;
                     System.out.println("Enter the value of n:");
                     int iterNum = Integer.parseInt(scanner.nextLine());
