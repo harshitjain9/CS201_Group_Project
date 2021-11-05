@@ -11,6 +11,7 @@ import org.json.simple.parser.*;
 import org.springframework.boot.SpringApplication;
 
 import com.example.demo.KD.*;
+import com.github.javafaker.Faker;
 import com.example.demo.LoadData;
 import com.example.demo.Distance;
 
@@ -37,7 +38,7 @@ public class Cs201ProjectApplication {
         double[] inputCoordinates = {inputData[0], inputData[1]};
         double inputRadius = inputData[2];
         ArrayList<Business> resultList = new ArrayList<>();
-
+        long startTime = System.nanoTime();
 		for (Business business: allData) {
 			double currentDistance = Distance.distance(business.getCoordinates()[0], business.getCoordinates()[1], inputCoordinates[0], inputCoordinates[1]);
 			if (currentDistance < inputRadius) {
@@ -47,7 +48,10 @@ public class Cs201ProjectApplication {
         for (Business business: resultList) {
             business.printBusiness(inputCoordinates);
         }
-        System.out.println(resultList.size());
+        long endTime = System.nanoTime();
+        System.out.println("size is: " + resultList.size());
+        long duration = (endTime - startTime);
+        System.out.println("time taken is: " + duration/1000000 + "milliseconds");
 	}
 
     public static void spacePartitioning() {
@@ -84,10 +88,34 @@ public class Cs201ProjectApplication {
         System.out.println(kdNodes.size());
         System.out.println("");
     }
- 
-	public static void main(String[] args) {
-		SpringApplication.run(Cs201ProjectApplication.class, args);
 
+    public static void appendJson(int n) {
+        Faker faker = new Faker();;
+        for (int i = 0; i < n; i++) {
+        try {
+            BufferedWriter addMoreData = new BufferedWriter(new FileWriter("./yelp_academic_dataset_business.json", true));
+
+                String randomstring = faker.name().fullName();
+                double randomlatitude = (Math.random() * ((90.0 - (-90.0)) + 1)) + (-90.0);   // This Will Create A Random Number Inbetween Your Min And Max.
+                double randomlongitude = (Math.random() * ((180.0 - (-180.0)) + 1)) + (-180.0);   // This Will Create A Random Number Inbetween Your Min And Max.
+                String s = String.format("{\"name\":\"%s\",\"address\":\"%s\",\"latitude\":%s,\"longitude\":%s}", randomstring, randomstring, Double.toString(randomlatitude), Double.toString(randomlongitude));
+                // s = String.format("{\"name\":%s,\"latitude\":%lf,\"longitude\":%lf", randomstring, randomstring, randomlatitude, randomlongitude);
+                addMoreData.append(s);
+                System.out.println("test");
+                addMoreData.append("\n");
+                addMoreData.close();
+            
+            
+        }
+        catch (IOException e) {
+            System.out.println(e.getStackTrace());
+        }
+    }
+    }
+	public static void main(String[] args) { 
+		SpringApplication.run(Cs201ProjectApplication.class, args);
+        
+        
         System.out.println("Number: Algorithm");
         System.out.println("1: Linear Search");
         System.out.println("2: Space Partioning using KD Tree");
