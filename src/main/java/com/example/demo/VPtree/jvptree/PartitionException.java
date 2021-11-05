@@ -1,4 +1,4 @@
-package com.eatthepath.jvptree;
+package com.example.demo.VPtree.jvptree;
 
 /**
  * Indicates that a list of points could not be partitioned by distance because either all points are on one side of

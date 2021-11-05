@@ -1,4 +1,4 @@
-package com.eatthepath.jvptree;
+package com.example.demo.VPtree.jvptree;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import com.eatthepath.jvptree.util.SamplingMedianDistanceThresholdSelectionStrategy;
+import com.example.demo.VPtree.jvptree.util.*;
 
 /**
  * <p>A vantage-point tree (or vp-tree) is a binary space partitioning collection of points in a metric space. The main

@@ -1,4 +1,4 @@
-package com.eatthepath.jvptree;
+package com.example.demo.VPtree.jvptree;
 
 import java.util.List;
 

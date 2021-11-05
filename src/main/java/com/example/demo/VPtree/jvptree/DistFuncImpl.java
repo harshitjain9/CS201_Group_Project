@@ -1,6 +1,8 @@
-package com.eatthepath.jvptree;
+package com.example.demo.VPtree.jvptree;
 
-import com.eatthepath.Business;
+import com.example.demo.VPtree.Business;
+
+//import com.eatthepath.Business;
 
 public class DistFuncImpl implements DistanceFunction<Business> {
 

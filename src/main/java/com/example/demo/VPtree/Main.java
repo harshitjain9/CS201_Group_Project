@@ -1,4 +1,4 @@
-package com.eatthepath;
+package com.example.demo.VPtree;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import com.eatthepath.jvptree.DistFuncImpl;
+import com.example.demo.VPtree.jvptree.DistFuncImpl;
 import com.eatthepath.jvptree.VPTree;
 
 import org.json.simple.*;

@@ -3,4 +3,4 @@
  *
  * @author <a href="https://github.com/jchambers">Jon Chambers</a>
  */
-package com.eatthepath.jvptree;
+package com.example.demo.VPtree.jvptree;

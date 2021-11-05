@@ -1,10 +1,10 @@
-package com.eatthepath.jvptree.util;
+package com.example.demo.VPtree.jvptree.util;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.eatthepath.jvptree.DistanceFunction;
-import com.eatthepath.jvptree.ThresholdSelectionStrategy;
+import com.example.demo.VPtree.jvptree.DistanceFunction;
+import com.example.demo.VPtree.jvptree.ThresholdSelectionStrategy;
 
 /**
  * A threshold distance selection strategy that uses the median distance from the origin to a subset of the given list

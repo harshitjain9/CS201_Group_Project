@@ -1,4 +1,4 @@
-package com.eatthepath.jvptree;
+package com.example.demo.VPtree.jvptree;
 
 /**
  * A stateless filter that can determine whether points should be included in a spatial index's result set when

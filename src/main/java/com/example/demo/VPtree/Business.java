@@ -1,4 +1,4 @@
-package com.eatthepath;
+package com.example.demo.VPtree;
 
 public class Business {
     private String name;

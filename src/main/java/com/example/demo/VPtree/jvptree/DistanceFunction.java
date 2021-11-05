@@ -1,4 +1,4 @@
-package com.eatthepath.jvptree;
+package com.example.demo.VPtree.jvptree;
 
 /**
  * <p>A function that calculates the distance between two points. For the purposes of vp-trees, distance functions must
