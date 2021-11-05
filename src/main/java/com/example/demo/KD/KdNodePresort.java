@@ -35,6 +35,9 @@ package com.example.demo.KD;
 import java.lang.System;
 import java.util.ArrayList;
 import java.util.List;
+import com.example.demo.Distance;
+import com.example.demo.Business;
+
 
 /**
  * <p>
@@ -60,7 +63,8 @@ import java.util.List;
 	 */
 public class KdNodePresort {
 	
-	private final int[] point;
+	// private final double[] point;
+	public final Business business;
 	private KdNodePresort ltChild, gtChild;
 	/**
 	 * <p>
@@ -69,9 +73,10 @@ public class KdNodePresort {
 	 * 
 	 * @param point - the multi-dimensional point to store in the {@code KdNode}
 	 */
-	public KdNodePresort (final int[] point) {
-		this.point = point;
-		ltChild = gtChild = null;
+	public KdNodePresort (final Business business) {
+		this.business = business;
+		ltChild = null;
+		gtChild = null;
 	}
 	
 	/**
@@ -83,8 +88,8 @@ public class KdNodePresort {
 	 * @param reference - an array of references to the (x,y,z,w...) coordinates
 	 * @param i - the index of the most significant coordinate in the super key
 	 */
-	private static void initializeReference(final int[][] coordinates,
-			final int[][] reference, final int i) {
+	private static void initializeReference(final double[][] coordinates,
+			final double[][] reference, final int i) {
 		for (int j = 0; j < reference.length; j++) {
 			reference[j] = coordinates[j];
 		}
@@ -101,8 +106,8 @@ public class KdNodePresort {
 	 * @param p - the most significant dimension
 	 * @returns an int that represents the result of comparing two super keys
 	 */
-	private static int superKeyCompare(final int[] a, final int[] b, final int p) {
-		int diff = 0;
+	private static double superKeyCompare(final double[] a, final double[] b, final int p) {
+		double diff = 0;
 		for (int i = 0; i < a.length; i++) {
 			// A fast alternative to the modulus operator for (i + p) < 2 * a.length.
 			final int r = (i + p < a.length) ? i + p : i + p - a.length;
@@ -127,7 +132,7 @@ public class KdNodePresort {
 	 * @param high - the high index of the region of reference to sort
 	 * @param p - the sorting partition (x, y, z, w...)
 	 */
-	private static void mergeSort(final int[][] reference, final int[][] temporary,
+	private static void mergeSort(final double[][] reference, final double[][] temporary,
 			final int low, final int high, final int p) {
 
 		int i, j, k;
@@ -169,14 +174,14 @@ public class KdNodePresort {
 	 * @param p - the index of the most significant coordinate in the super key
 	 * @returns the address of the last element of the references array following duplicate removal
 	 */
-	private static int removeDuplicates(final int[][] reference, final int p) {
+	private static int removeDuplicates(final double[][] reference, final int p) {
 		int end = 0;
 		for (int j = 1; j < reference.length; j++) {
-			int compare = superKeyCompare(reference[j], reference[j-1], p);
+			double compare = superKeyCompare(reference[j], reference[j-1], p);
 			if (compare < 0) {
 				throw new RuntimeException( "merge sort failure: superKeyCompare(ref[" +
 						Integer.toString(j) + "], ref[" + Integer.toString(j-1) +
-						"], (" + Integer.toString(p) + ") = " + Integer.toString(compare) );
+						"], (" + Integer.toString(p) + ") = " + Double.toString(compare) );
 			} else if (compare > 0) {
 				reference[++end] = reference[j];
 			}
@@ -199,7 +204,7 @@ public class KdNodePresort {
 	 * @param depth - the depth in the k-d tree
 	 * @return a {@link KdNodePresort}
 	 */
-	private static KdNodePresort buildKdTree(final int[][][] references, final int[][] temporary,
+	private static KdNodePresort buildKdTree(final double[][][] references, final double[][] temporary,
 			final int start, final int end, final int depth) {
 
 		final KdNodePresort node;
@@ -210,23 +215,29 @@ public class KdNodePresort {
 		if (end == start) {
 
 			// Only one reference is passed to this method, so store it at this level of the tree.
-			node = new KdNodePresort(references[0][start]);
+			Business startBusiness = new Business("no name", "no address", references[0][start]);
+			node = new KdNodePresort(startBusiness);
 
 		} else if (end == start + 1) {
 
 			// Two references are passed to this method in sorted order, so store the start
 			// element at this level of the tree and store the end element as the > child. 
-			node = new KdNodePresort(references[0][start]);
-			node.gtChild = new KdNodePresort(references[0][end]);
+			Business startBusiness = new Business("no name", "no address", references[0][start]);
+			Business endBusiness = new Business("no name", "no address", references[0][end]);
+			node = new KdNodePresort(startBusiness);
+			node.gtChild = new KdNodePresort(endBusiness);
 			
 		} else if (end == start + 2) {
 			
 			// Three references are passed to this method in sorted order, so
 			// store the median element at this level of the tree, store the start
 			// element as the < child and store the end element as the > child.
-			node = new KdNodePresort(references[0][start + 1]);
-			node.ltChild = new KdNodePresort(references[0][start]);
-			node.gtChild = new KdNodePresort(references[0][end]);
+			Business startBusiness = new Business("no name", "no address", references[0][start]);
+			Business startPlusOneBusiness = new Business("no name", "no address", references[0][start + 1]);
+			Business endBusiness = new Business("no name", "no address", references[0][end]);
+			node = new KdNodePresort(startPlusOneBusiness);
+			node.ltChild = new KdNodePresort(startBusiness);
+			node.gtChild = new KdNodePresort(endBusiness);
 			
 		} else if (end > start + 2) {
 			
@@ -238,7 +249,8 @@ public class KdNodePresort {
 				throw new RuntimeException("error in median calculation at depth = " + depth +
 					" : start = " + start + "  median = " + median + "  end = " + end);
 			}
-			node = new KdNodePresort(references[0][median]);
+			Business medianBusiness = new Business("no name", "no address", references[0][median]); 
+			node = new KdNodePresort(medianBusiness);
 
 			// Copy a[0] to the temporary array before partitioning.
 			for (int i = start; i <= end; i++) {
@@ -260,7 +272,7 @@ public class KdNodePresort {
 				for (int j = start; j <= end; j++) {
 					
 					// Process one reference array.  Compare once only.
-					final int compare = superKeyCompare(references[i][j], node.point, p);
+					final double compare = superKeyCompare(references[i][j], node.business.getCoordinates(), p);
 					if (compare < 0) {
 						references[i-1][++lower] = references[i][j];
 					} else if (compare > 0) {
@@ -333,30 +345,30 @@ public class KdNodePresort {
 	 */
 	private int verifyKdTree(final int depth) {
 
-		if (point == null) {
+		if (business.getCoordinates()== null) {
 			throw new RuntimeException("point is null");
 		}
 
 		// The partition cycles by the number of coordinates.
-		final int p = depth % point.length;
+		final int p = depth % business.getCoordinates().length;
 
 		// Count this node.
 		int count = 1 ;
 
 		if (ltChild != null) {
-			if (ltChild.point[p] > point[p]) {
+			if (ltChild.business.getCoordinates()[p] > business.getCoordinates()[p]) {
 				throw new RuntimeException("node is > partition!");
 			}
-			if (superKeyCompare(ltChild.point, point, p) >= 0) {
+			if (superKeyCompare(ltChild.business.getCoordinates(), business.getCoordinates(), p) >= 0) {
 				throw new RuntimeException("node is >= partition!");
 			}
 			count += ltChild.verifyKdTree(depth + 1);
 		}
 		if (gtChild != null) {
-			if (gtChild.point[p] < point[p]) {
+			if (gtChild.business.getCoordinates()[p] < business.getCoordinates()[p]) {
 				throw new RuntimeException("node is < partition!");
 			}
-			if (superKeyCompare(gtChild.point, point, p) <= 0) {
+			if (superKeyCompare(gtChild.business.getCoordinates(), business.getCoordinates(), p) <= 0) {
 				throw new RuntimeException("node is <= partition!");
 			}
 			count += gtChild.verifyKdTree(depth + 1);
@@ -372,13 +384,19 @@ public class KdNodePresort {
 	 *  
 	 * @param coordinates - the int[][] of points
 	 */
-	public static KdNodePresort createKdTree(int[][] coordinates) {
+	public static KdNodePresort createKdTree(List<Business> businesses) {
+
+
 		
 		// Declare and initialize the reference arrays.  The number of dimensions may be
 		// obtained from either coordinates[0].length or references.length.  The number
 		// of points may be obtained from either coordinates.length or references[0].length.
 		long initTime = System.currentTimeMillis();
-		final int[][][] references = new int[coordinates[0].length][coordinates.length][];
+		final double[][][] references = new double[businesses.get(0).getCoordinates().length][businesses.size()][];
+		double[][] coordinates = new double[businesses.size()][];
+		for (int i = 0; i<businesses.size();i++) {
+			coordinates[i] = businesses.get(i).getCoordinates();
+		}
 		for (int i = 0; i < references.length; i++) {
 			initializeReference(coordinates, references[i], i);
 		}
@@ -386,7 +404,7 @@ public class KdNodePresort {
 		
 		// Merge sort the index arrays.
 		long sortTime = System.currentTimeMillis();
-		final int[][] temporary = new int[coordinates.length][];
+		final double[][] temporary = new double[coordinates.length][];
 		for (int i = 0; i < references.length; i++) {
 			mergeSort(references[i], temporary, 0, coordinates.length - 1, i);
 		}
@@ -444,17 +462,21 @@ public class KdNodePresort {
 	 * @return a List<KdNode>
 	 * that contains the k-d nodes that lie within the cutoff distance of the query node
 	 */
-	public List<KdNodePresort> searchKdTree(final int[] query, final int cut, final int depth) {
+	public List<KdNodePresort> searchKdTree(final double[] query, final double cut, final int depth) {
 
 		// The partition cycles as x, y, z, etc.
-		final int p = depth % point.length;
+		final int p = depth % business.getCoordinates().length;
 
 		// If the distance from the query node to the k-d node is within the cutoff distance
 		// in all k dimensions, add the k-d node to a list.
 		List<KdNodePresort> result = new ArrayList<KdNodePresort>();
+		//-------------------------------------------------------------------------------------------
+		// if (Distance.distance(business.getCoordinates()[0], business.getCoordinates()[1], query[0], query[1]) <= cut) {
+		// 	result.add(this);
+		// }
 		boolean inside = true;
-		for (int i = 0; i < point.length; i++) {
-			if (Math.abs(query[i] - point[i]) > cut) {
+		for (int i = 0; i < business.getCoordinates().length; i++) {
+			if (Math.abs(query[i] - business.getCoordinates()[i]) > cut) {
 				inside = false;
 				break;
 			}
@@ -462,17 +484,20 @@ public class KdNodePresort {
 		if (inside) {
 			result.add(this);
 		}
-
+		//-------------------------------------------------------------------------------------------
 		// Search the < branch of the k-d tree if the partition coordinate of the query point minus
 		// the cutoff distance is <= the partition coordinate of the k-d node.  The < branch must be
 		// searched when the cutoff distance equals the partition coordinate because the super key
 		// may assign a point to either branch of the tree if the sorting or partition coordinate,
 		// which forms the most significant portion of the super key, shows equality.
 		if (ltChild != null) {
-			if ( (query[p] - cut) <= point[p] ) {
+			if ( (query[p] - cut) <= business.getCoordinates()[p] ) {
 				result.addAll( ltChild.searchKdTree(query, cut, depth + 1) );
 			}
 		}
+		//point input = (5,5)
+		//point node in the kd tree = (6,1000)
+		//cutoff = 100
 
 		// Search the > branch of the k-d tree if the partition coordinate of the query point plus
 		// the cutoff distance is >= the partition coordinate of the k-d node.  The < branch must be
@@ -480,12 +505,13 @@ public class KdNodePresort {
 		// may assign a point to either branch of the tree if the sorting or partition coordinate,
 		// which forms the most significant portion of the super key, shows equality.
 		if (gtChild != null) {
-			if ( (query[p] + cut) >= point[p] ) {
+			if ( (query[p] + cut) >= business.getCoordinates()[p] ) {
 				result.addAll( gtChild.searchKdTree(query, cut, depth + 1) );
 			}
 		}
 		return result;
 	}
+
 
 	/**
 	 * <p>
@@ -499,11 +525,11 @@ public class KdNodePresort {
 		for (int i = 0; i < depth; i++) {
 			System.out.print("         ");
 		}
-		printTuple(point);
+		printTuple(business.getCoordinates());
 		System.out.println();
-		if (ltChild != null) {
-			ltChild.printKdTree(depth+1);
-		}
+		// if (ltChild != null) {
+		// 	ltChild.printKdTree(depth+1);
+		// }
 	}
 
 	/**
@@ -513,19 +539,19 @@ public class KdNodePresort {
 	 * 
 	 * @param p - the tuple
 	 */
-	public static void printTuple(final int[] p) {
+	public static void printTuple(final double[] p) {
 		System.out.print("(");
 		for (int i = 0; i < p.length; i++) {
-			System.out.print(p[i]);
-			if (i < p.length - 1) {
-				System.out.print(", ");
+			System.out.println(p[i]);
+			if (i < (p.length - 1)) {
+				System.out.println(", ");
 			}
 		}
 		System.out.print(")");
 	}
 
-	public int[] getPoint() {
-		return point;
+	public double[] getPoint() {
+		return business.getCoordinates();
 	}
 }
 
@@ -570,3 +596,12 @@ public class KdNodePresort {
 // 		System.out.println("\n");
 // 	}
 // }
+
+
+//normal kd tree does not work - dino working on it
+//kd tree with basic balance is not implemented yet - yash
+//kd tree with advanced balance does not return names and addressess 
+
+//plot graph of the time taken for each data structure with different input n- 10, 100, 1000, 10000, ...
+//look for a tool to measure space, check space taken with different input n - 10, 100, 1000, 10000, ....
+

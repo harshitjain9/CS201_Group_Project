@@ -1,5 +1,7 @@
 package com.example.demo;
 
+import com.example.demo.Distance;
+
 public class Business {
     private String name;
 
@@ -27,6 +29,22 @@ public class Business {
 
     public double[] getCoordinates() {
         return coordinates;
+    }
+
+    public void printBusiness() {
+        System.out.println("Name: " + name);
+        System.out.println("Address: " + address);
+        System.out.println("Coordinates: (" + String.valueOf(coordinates[0]) + ", " + String.valueOf(coordinates[1]) + ")");
+        System.out.println("------------------------------------------");
+    }
+
+    public void printBusiness(double[] inputCoordinates) {
+        double distance = Distance.distance(inputCoordinates[0], inputCoordinates[1], coordinates[0], coordinates[1]);
+        System.out.println("Name: " + name);
+        System.out.println("Address: " + address);
+        System.out.println("Coordinates: (" + String.valueOf(coordinates[0]) + ", " + String.valueOf(coordinates[1]) + ")");
+        System.out.println("Distance: " + String.valueOf(distance));
+        System.out.println("------------------------------------------");
     }
 
 }
