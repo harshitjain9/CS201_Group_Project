@@ -6,6 +6,7 @@ import java.lang.*;
 import java.io.*;
 import org.json.simple.*;
 import org.json.simple.parser.*;
+import com.github.javafaker.Faker;
 
 
 import org.springframework.boot.SpringApplication;
@@ -16,6 +17,29 @@ import com.example.demo.Distance;
 
 //@SpringBootApplication
 public class Cs201ProjectApplication {
+
+    public static void appendJson(int n) {
+        Faker faker = new Faker();;
+        for (int i = 0; i < n; i++) {
+        try {
+            BufferedWriter addMoreData = new BufferedWriter(new FileWriter("./yelp_academic_dataset_business.json", true));
+
+                String randomstring = faker.name().fullName();
+                double randomlatitude = (Math.random() * ((90.0 - (-90.0)) + 1)) + (-90.0);   // This Will Create A Random Number Inbetween Your Min And Max.
+                double randomlongitude = (Math.random() * ((180.0 - (-180.0)) + 1)) + (-180.0);   // This Will Create A Random Number Inbetween Your Min And Max.
+                String s = String.format("{\"name\":\"%s\",\"address\":\"%s\",\"latitude\":%s,\"longitude\":%s}", randomstring, randomstring, Double.toString(randomlatitude), Double.toString(randomlongitude));
+                addMoreData.append(s);
+                System.out.println("test");
+                addMoreData.append("\n");
+                addMoreData.close();
+
+
+        }
+        catch (IOException e) {
+            System.out.println(e.getStackTrace());
+        }
+    }
+    }
 
     public static double[] getInputData() {
         Scanner scanner = new Scanner(System.in);
@@ -31,88 +55,146 @@ public class Cs201ProjectApplication {
     }
 
 
-	public static void linearSearch() {
+	public static void linearSearch(boolean print, boolean dummy, int n) {
+        long beforeUsedMem=Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory();
+        long startTime = System.currentTimeMillis();
 		ArrayList<Business> allData = LoadData.getUnsortedList();
-        double[] inputData = getInputData();
+        long endTime = System.currentTimeMillis();
+        long afterUsedMem=Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory();
+        long actualMemUsed=afterUsedMem-beforeUsedMem;
+        long creatingListTime = endTime - startTime;
+        double[] inputData = {40.0, -82.0, 10};
         double[] inputCoordinates = {inputData[0], inputData[1]};
         double inputRadius = inputData[2];
+        if (!dummy) {
+            inputData = getInputData();
+            inputCoordinates[0] = inputData[0];
+            inputCoordinates[1] = inputData[1];
+            inputRadius = inputData[2];
+        }
         ArrayList<Business> resultList = new ArrayList<>();
-
+        startTime = System.currentTimeMillis();
 		for (Business business: allData) {
 			double currentDistance = Distance.distance(business.getCoordinates()[0], business.getCoordinates()[1], inputCoordinates[0], inputCoordinates[1]);
 			if (currentDistance < inputRadius) {
                 resultList.add(business); 
 			}
 		}
-        for (Business business: resultList) {
-            business.printBusiness(inputCoordinates);
-        }
-        System.out.println(resultList.size());
+        endTime = System.currentTimeMillis();
+        long searchingListTime = endTime - startTime;
+        System.out.println("n = " + String.valueOf(n));
+        System.out.println("Time to create list: " + String.valueOf(creatingListTime));
+        System.out.println("Time to search the list: " + String.valueOf(searchingListTime));
+        System.out.println("Memory used: " + String.valueOf(actualMemUsed));
+        if (print) {
+            for (Business business: resultList) {
+                business.printBusiness(inputCoordinates);
+            }
+        }   
 	}
 
-    public static void spacePartitioning() {
+    public static void spacePartitioning(boolean print, boolean dummy, int n) {
+        long beforeUsedMem=Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory();
+        long startTime = System.currentTimeMillis();
         KDTree kdt = LoadData.getKDTree();
-        KDNode root = kdt.Root;
-        double[] inputData = getInputData();
+        long endTime = System.currentTimeMillis();
+        long afterUsedMem=Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory();
+        long actualMemUsed=afterUsedMem-beforeUsedMem;
+        long creatingListTime = endTime - startTime;
+        double[] inputData = {40.0, -82.0, 10};
         double[] inputCoordinates = {inputData[0], inputData[1]};
         double inputRadius = inputData[2];
-        List<KDNode> kdNodes = root.searchKdTree(inputCoordinates, inputRadius, 0);
-		for (int i = 0; i < kdNodes.size(); i++) {
-			KDNode node = kdNodes.get(i);
-			node.x.printBusiness(inputCoordinates);
-		}
-        System.out.println(kdNodes.size());
-        // Business newBusiness = new Business("no name", "no address", inputCoordinates);
-
-        // ArrayList<KDNode> kdnList = kdt.find_nearest_list(newBusiness, inputCoordinates[0], inputCoordinates[1], inputData[2]);
-        // KDNode kdn = kdt.find_nearest(newBusiness, inputCoordinates[0], inputCoordinates[1], inputData[2]);
-        // System.out.println("Name: " + kdn.x.getName());
-		// System.out.println("Address: " + kdn.x.getAddr());
-		// System.out.println("Minimum Distance: " + String.valueOf(kdt.find_nearest_distance()));
-
-        // System.out.println("\nList of all nodes within the input radius: ");
-        // for (KDNode node : kdnList) {
-        //     Business business = node.x;
-        //     System.out.println(business.getName());
-        // }
-        
+        if (!dummy) {
+            inputData = getInputData();
+            inputCoordinates[0] = inputData[0];
+            inputCoordinates[1] = inputData[1];
+            inputRadius = inputData[2];
+        }
+        startTime = System.currentTimeMillis();
+        List<KDNode> kdNodes = kdt.searchKdTree(inputCoordinates, inputRadius, 0, kdt.Root);
+        endTime = System.currentTimeMillis();
+        long searchingListTime = endTime - startTime;
+        System.out.println("n = " + String.valueOf(n));
+        System.out.println("Time to create list: " + String.valueOf(creatingListTime));
+        System.out.println("Time to search the list: " + String.valueOf(searchingListTime));
+        System.out.println("Memory used: " + String.valueOf(actualMemUsed));
+        if (print) {
+            for (int i = 0; i < kdNodes.size(); i++) {
+                KDNode node = kdNodes.get(i);
+                node.x.printBusiness(inputCoordinates);
+            }
+        }
     }
 
-    public static void kdTreePresort(int n) {
-        //160585
-        //10, 100, 1000, 10000, 100000, 160585 
-
-        //amount of memory occupied by the program - find a tool
+    public static void kdTreePresort(boolean print, boolean dummy, int n) {
+        long beforeUsedMem=Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory();
+        long startTime = System.currentTimeMillis();
         KdNodePresort root = LoadData.getRootKDTreePresort(n);
-        double[] inputData = getInputData();
+        long endTime = System.currentTimeMillis();
+        long afterUsedMem=Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory();
+        long actualMemUsed=afterUsedMem-beforeUsedMem;
+        long creatingListTime = endTime - startTime;
+        double[] inputData = {40.0, -82.0, 10};
         double[] inputCoordinates = {inputData[0], inputData[1]};
         double inputRadius = inputData[2];
+        if (!dummy) {
+            inputData = getInputData();
+            inputCoordinates[0] = inputData[0];
+            inputCoordinates[1] = inputData[1];
+            inputRadius = inputData[2];
+        }
+        startTime = System.currentTimeMillis();
         List<KdNodePresort> kdNodes = root.searchKdTree(inputCoordinates, inputRadius, 0);
-		for (int i = 0; i < kdNodes.size(); i++) {
-			KdNodePresort node = kdNodes.get(i);
-			node.business.printBusiness(inputCoordinates);
-		}
-        System.out.println(kdNodes.size());
-        System.out.println("");
+        endTime = System.currentTimeMillis();
+        long searchingListTime = endTime - startTime;
+        System.out.println("n = " + String.valueOf(n));
+        System.out.println("Time to create list: " + String.valueOf(creatingListTime));
+        System.out.println("Time to search the list: " + String.valueOf(searchingListTime));
+        System.out.println("Memory used: " + String.valueOf(actualMemUsed));
+        if (print) {
+            for (int i = 0; i < kdNodes.size(); i++) {
+                KdNodePresort node = kdNodes.get(i);
+                node.business.printBusiness(inputCoordinates);
+            }
+        }
     }
 
-    public static void kdTreePartition() {
+    public static void kdTreePartition(boolean print, boolean dummy, int n) {
+        long beforeUsedMem=Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory();
+        long startTime = System.currentTimeMillis();
         KdNodePartition root = LoadData.getRootKDTreePartition();
-        double[] inputData = getInputData();
+        long endTime = System.currentTimeMillis();
+        long afterUsedMem=Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory();
+        long actualMemUsed=afterUsedMem-beforeUsedMem;
+        long creatingListTime = endTime - startTime;
+        double[] inputData = {40.0, -82.0, 10};
         double[] inputCoordinates = {inputData[0], inputData[1]};
         double inputRadius = inputData[2];
+        if (!dummy) {
+            inputData = getInputData();
+            inputCoordinates[0] = inputData[0];
+            inputCoordinates[1] = inputData[1];
+            inputRadius = inputData[2];
+        }
+        startTime = System.currentTimeMillis();
         List<KdNodePartition> kdNodes = root.searchKdTree(inputCoordinates, inputRadius, 0);
-		for (int i = 0; i < kdNodes.size(); i++) {
-			KdNodePartition node = kdNodes.get(i);
-			node.business.printBusiness(inputCoordinates);
-		}
-        System.out.println(kdNodes.size());
-        System.out.println("");
+        endTime = System.currentTimeMillis();
+        long searchingListTime = endTime - startTime;
+        System.out.println("n = " + String.valueOf(n));
+        System.out.println("Time to create list: " + String.valueOf(creatingListTime));
+        System.out.println("Time to search the list: " + String.valueOf(searchingListTime));
+        System.out.println("Memory used: " + String.valueOf(actualMemUsed));
+        if (print) {
+            for (int i = 0; i < kdNodes.size(); i++) {
+                KdNodePartition node = kdNodes.get(i);
+                node.business.printBusiness(inputCoordinates);
+            }
+        }
     }
  
 	public static void main(String[] args) {
 		SpringApplication.run(Cs201ProjectApplication.class, args);
-
+        int[] nList = {10, 100, 1000, 10000, 100000, 1000000};
         System.out.println("Number: Algorithm");
         System.out.println("1: Linear Search");
         System.out.println("2: Space Partioning using KD Tree");
@@ -127,18 +209,27 @@ public class Cs201ProjectApplication {
                 algorthimNumber = Integer.parseInt(scanner.nextLine());
                 if (algorthimNumber == 1) {
                     validNumber = true;
-                    linearSearch();
+                    for (int n: nList) {
+                        linearSearch(false,  true, n);
+                    }
                 } else if (algorthimNumber == 2) {
                     validNumber = true;
-                    spacePartitioning();
+                    for (int n: nList) {
+                        spacePartitioning(false,  true, n);
+                    }
                 } else if (algorthimNumber == 3) {
                     validNumber = true;
-                    kdTreePartition();
+                    for (int n: nList) {
+                        kdTreePartition(false,  true, n);
+                    }
                 } else if (algorthimNumber == 4) {
                     validNumber = true;
-                    System.out.println("Enter the value of n:");
-                    int iterNum = Integer.parseInt(scanner.nextLine());
-                    kdTreePresort(iterNum);
+                    for (int n: nList) {
+                        kdTreePresort(false,  true, n);
+                    }
+                } else if (algorthimNumber == 5) {
+                    validNumber = true;
+                    appendJson(1000010 - 160585);
                 } else {
                     continue;
                 }
