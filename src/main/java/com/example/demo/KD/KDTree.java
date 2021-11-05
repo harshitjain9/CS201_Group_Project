@@ -1,7 +1,9 @@
 package com.example.demo.KD;
 
-import com.example.demo.Business;
+import java.util.ArrayList;
 
+import com.example.demo.Business;
+import com.example.demo.Distance;
 public class KDTree
 {
     KDNode Root;
@@ -59,7 +61,7 @@ public class KDTree
         return true;
     }
  
-    public KDNode find_nearest(Business x)
+    public KDNode find_nearest(Business x, double inputLatitude, double inputLongitude, double inputRadius)
     {
         if (Root == null)
             return null;
@@ -67,8 +69,7 @@ public class KDTree
         checked_nodes = 0;
         KDNode parent = Root.FindParent(x);
         nearest_neighbour = parent;
-        d_min = Root.distance2(x, parent.x, 2);
-        ;
+        d_min = Root.distance(x.getCoordinates()[0], x.getCoordinates()[1], inputLatitude, inputLongitude);
  
         if (parent.equal(x, parent.x, 2) == true)
             return nearest_neighbour;
@@ -78,6 +79,32 @@ public class KDTree
  
         return nearest_neighbour;
     }
+
+    public ArrayList<KDNode> find_nearest_list(Business x, double inputLatitude, double inputLongitude, double inputRadius)
+    {
+        if (Root == null)
+            return null;
+
+        ArrayList<KDNode> list = new ArrayList<KDNode>();
+ 
+        checked_nodes = 0;
+        KDNode parent = Root.FindParent(x);
+        nearest_neighbour = parent;
+        double dist = Root.distance(x.getCoordinates()[0], x.getCoordinates()[1], inputLatitude, inputLongitude);
+        if (dist < d_min) {
+            d_min = dist;
+        }
+ 
+        if (dist < inputRadius) {
+            list.add(nearest_neighbour);
+        }
+ 
+        search_parent(parent, x);
+        uncheck();
+ 
+        return list;
+    }
+
 
     public double find_nearest_distance() {
         return d_min;
