@@ -75,12 +75,8 @@ public class Cs201ProjectApplication {
         
     }
 
-    public static void kdTreePresort(int n) {
-        //160585
-        //10, 100, 1000, 10000, 100000, 160585 
-
-        //amount of memory occupied by the program - find a tool
-        KdNodePresort root = LoadData.getRootKDTreePresort(n);
+    public static void kdTreePresort() {
+        KdNodePresort root = LoadData.getRootKDTreePresort();
         double[] inputData = getInputData();
         double[] inputCoordinates = {inputData[0], inputData[1]};
         double inputRadius = inputData[2];
@@ -123,8 +119,7 @@ public class Cs201ProjectApplication {
         System.out.println("Number: Algorithm");
         System.out.println("1: Linear Search");
         System.out.println("2: Space Partioning using KD Tree");
-        System.out.println("3: Space Partioning using Balanced KD Tree- Partition");
-        System.out.println("4: Space Partioning using Balanced KD Tree- Presort");
+        System.out.println("3: Space Partioning using Balanced KD Tree- Presort");
         Scanner scanner = new Scanner(System.in);
         boolean validNumber = false;
         int algorthimNumber = 1;
@@ -140,12 +135,7 @@ public class Cs201ProjectApplication {
                     spacePartitioning();
                 } else if (algorthimNumber == 3) {
                     validNumber = true;
-                    kdTreePartition();
-                } else if (algorthimNumber == 4) {
-                    validNumber = true;
-                    System.out.println("Enter the value of n:");
-                    int iterNum = Integer.parseInt(scanner.nextLine());
-                    kdTreePresort(iterNum);
+                    kdTreePresort();
                 } else {
                     continue;
                 }
