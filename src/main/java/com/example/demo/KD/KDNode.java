@@ -92,4 +92,8 @@ public class KDNode
         S += (x1Long - x2Long) * (x1Long - x2Long);
         return S;
     }
+
+    public double distance(double lat1, double lon1, double lat2, double lon2) {
+        return Math.max(Math.abs(lat1 - lat2), Math.abs(lon1 - lon2));
+	}
 }
