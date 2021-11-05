@@ -89,6 +89,10 @@ public class Cs201ProjectApplication {
         System.out.println("");
     }
 
+    public static void vpTree() {
+        
+    }
+
     public static void appendJson(int n) {
         Faker faker = new Faker();;
         for (int i = 0; i < n; i++) {
@@ -120,6 +124,7 @@ public class Cs201ProjectApplication {
         System.out.println("1: Linear Search");
         System.out.println("2: Space Partioning using KD Tree");
         System.out.println("3: Space Partioning using Balanced KD Tree- Presort");
+        System.out.println("4: Vantage Point Tree Partition Search");
         Scanner scanner = new Scanner(System.in);
         boolean validNumber = false;
         int algorthimNumber = 1;
@@ -136,6 +141,9 @@ public class Cs201ProjectApplication {
                 } else if (algorthimNumber == 3) {
                     validNumber = true;
                     kdTreePresort();
+                } else if (algorthimNumber == 4) {
+                    validNumber = true;
+                    vpTree();
                 } else {
                     continue;
                 }
