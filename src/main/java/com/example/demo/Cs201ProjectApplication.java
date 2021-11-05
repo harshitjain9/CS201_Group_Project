@@ -52,22 +52,29 @@ public class Cs201ProjectApplication {
 
     public static void spacePartitioning() {
         KDTree kdt = LoadData.getKDTree();
+        KDNode root = kdt.Root;
         double[] inputData = getInputData();
         double[] inputCoordinates = {inputData[0], inputData[1]};
-        Business newBusiness = new Business("no name", "no address", inputCoordinates);
+        double inputRadius = inputData[2];
+        List<KDNode> kdNodes = root.searchKdTree(inputCoordinates, inputRadius, 0);
+		for (int i = 0; i < kdNodes.size(); i++) {
+			KDNode node = kdNodes.get(i);
+			node.x.printBusiness(inputCoordinates);
+		}
+        System.out.println(kdNodes.size());
+        // Business newBusiness = new Business("no name", "no address", inputCoordinates);
 
+        // ArrayList<KDNode> kdnList = kdt.find_nearest_list(newBusiness, inputCoordinates[0], inputCoordinates[1], inputData[2]);
+        // KDNode kdn = kdt.find_nearest(newBusiness, inputCoordinates[0], inputCoordinates[1], inputData[2]);
+        // System.out.println("Name: " + kdn.x.getName());
+		// System.out.println("Address: " + kdn.x.getAddr());
+		// System.out.println("Minimum Distance: " + String.valueOf(kdt.find_nearest_distance()));
 
-        ArrayList<KDNode> kdnList = kdt.find_nearest_list(newBusiness, inputCoordinates[0], inputCoordinates[1], inputData[2]);
-        KDNode kdn = kdt.find_nearest(newBusiness, inputCoordinates[0], inputCoordinates[1], inputData[2]);
-        System.out.println("Name: " + kdn.x.getName());
-		System.out.println("Address: " + kdn.x.getAddr());
-		System.out.println("Minimum Distance: " + String.valueOf(kdt.find_nearest_distance()));
-
-        System.out.println("\nList of all nodes within the input radius: ");
-        for (KDNode node : kdnList) {
-            Business business = node.x;
-            System.out.println(business.getName());
-        }
+        // System.out.println("\nList of all nodes within the input radius: ");
+        // for (KDNode node : kdnList) {
+        //     Business business = node.x;
+        //     System.out.println(business.getName());
+        // }
         
     }
 

@@ -1,12 +1,13 @@
 package com.example.demo.KD;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.example.demo.Business;
 import com.example.demo.Distance;
 public class KDTree
 {
-    KDNode Root;
+    public KDNode Root;
  
     int TimeStart, TimeFinish;
     int CounterFreq;
@@ -104,6 +105,8 @@ public class KDTree
  
         return list;
     }
+
+    
 
 
     public double find_nearest_distance() {
