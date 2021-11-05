@@ -17,42 +17,43 @@ import com.example.demo.Distance;
 //@SpringBootApplication
 public class Cs201ProjectApplication {
 
-    public static double[] getInputCoordinates() {
-		Scanner scanner = new Scanner(System.in);
+    public static double[] getInputData() {
+        Scanner scanner = new Scanner(System.in);
 		System.out.println("Enter the latitude value: ");
 		double inputLatitude = Double.parseDouble(scanner.nextLine());
 		System.out.println("Enter the longitude value: ");
 		double inputLongitude = Double.parseDouble(scanner.nextLine());
-        double[] inputCoordinates = {inputLatitude, inputLongitude};
+        System.out.println("Enter the radius: ");
+		double inputRadius = Double.parseDouble(scanner.nextLine());
+        double[] inputData = {inputLatitude, inputLongitude, inputRadius};
         scanner.close();
-        return inputCoordinates;
+        return inputData;
     }
+
 
 	public static void linearSearch() {
 		ArrayList<Business> allData = LoadData.getUnsortedList();
+        double[] inputData = getInputData();
+        double[] inputCoordinates = {inputData[0], inputData[1]};
+        double inputRadius = inputData[2];
+        ArrayList<Business> resultList = new ArrayList<>();
 
-        double[] inputCoordinates = getInputCoordinates();
-		double minimumDistance = Double.MAX_VALUE;
-
-		String resultName = "";
-		String resultAddress = "";
-
-		for (Business each:allData) {
-			double currentDistance = Distance.distance(each.getCoordinates()[0], each.getCoordinates()[1], inputCoordinates[0], inputCoordinates[1]);
-			if (currentDistance < minimumDistance) {
-				minimumDistance = currentDistance;
-				resultName = each.getName();
-				resultAddress = each.getAddr();
+		for (Business business: allData) {
+			double currentDistance = Distance.distance(business.getCoordinates()[0], business.getCoordinates()[1], inputCoordinates[0], inputCoordinates[1]);
+			if (currentDistance < inputRadius) {
+                resultList.add(business); 
 			}
 		}
-		System.out.println("Name: " + resultName);
-		System.out.println("Address: " + resultAddress);
-		System.out.println("Minimum Distance: " + String.valueOf(minimumDistance));
+        for (Business business: resultList) {
+            business.printBusiness(inputCoordinates);
+        }
+        System.out.println(resultList.size());
 	}
 
     public static void spacePartitioning() {
         KDTree kdt = LoadData.getKDTree();
-		double[] inputCoordinates = getInputCoordinates();
+        double[] inputData = getInputData();
+        double[] inputCoordinates = {inputData[0], inputData[1]};
         Business newBusiness = new Business("no name", "no address", inputCoordinates);
 
         KDNode kdn = kdt.find_nearest(newBusiness);
@@ -64,18 +65,15 @@ public class Cs201ProjectApplication {
 
     public static void kdTreePresort() {
         KdNodePresort root = LoadData.getRootKDTreePresort();
-        double[] inputCoordinates = getInputCoordinates();
-        int[] intInputCoordinates = {(int) inputCoordinates[0], (int) inputCoordinates[1]};
-        int maximumSearchDistance = 1000;
-        List<KdNodePresort> kdNodes = root.searchKdTree(intInputCoordinates, maximumSearchDistance, 0);
-        System.out.println("List of k-d nodes within " + maximumSearchDistance + "-unit search distance follows:\n");
+        double[] inputData = getInputData();
+        double[] inputCoordinates = {inputData[0], inputData[1]};
+        double inputRadius = inputData[2];
+        List<KdNodePresort> kdNodes = root.searchKdTree(inputCoordinates, inputRadius, 0);
 		for (int i = 0; i < kdNodes.size(); i++) {
 			KdNodePresort node = kdNodes.get(i);
-			KdNodePresort.printTuple(node.getPoint());
-			// double distance = Distance.distance(node.getPoint()[0], node.getPoint()[1], intInputCoordinates[0], intInputCoordinates[1]);
-            // System.out.println("Distance is " + String.valueOf(distance));
-            System.out.println("");
+			node.business.printBusiness(inputCoordinates);
 		}
+        System.out.println(kdNodes.size());
         System.out.println("");
     }
  

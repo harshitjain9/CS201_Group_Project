@@ -60,27 +60,25 @@ public class LoadData {
 
 	public static KdNodePresort getRootKDTreePresort(){
 		System.out.println("Loading data in KD Tree..");
+        ArrayList<Business> allData = new ArrayList<>();
 		JSONParser parser = new JSONParser();
 		String line;
-		int numpoints = 160585;
-		int[][] allCoordinates = new int[numpoints][2];
-		int currentIdx = 0;
 		try (BufferedReader reader = new BufferedReader(new FileReader("./yelp_academic_dataset_business.json"))) {
 			while ((line = reader.readLine()) != null) {
 				JSONObject jsonObject = (JSONObject) parser.parse(line);
-				int latitude = (int) Math.round((double) jsonObject.get("latitude"));
-				int longitude = (int) Math.round((double) jsonObject.get("longitude"));
-				// String name = (String) jsonObject.get("name");
-				// String address = (String) jsonObject.get("address");
-				int[] coordinates = {latitude, longitude};
-				allCoordinates[currentIdx++] = coordinates;
+				double latitude = (double) jsonObject.get("latitude");
+				double longitude = (double) jsonObject.get("longitude");
+				String name = (String) jsonObject.get("name");
+				String address = (String) jsonObject.get("address");
+				double[] coordinates = {latitude, longitude};
+				allData.add(new Business(name, address, coordinates));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		KdNodePresort root = KdNodePresort.createKdTree(allCoordinates);
+		KdNodePresort root = KdNodePresort.createKdTree(allData);
 		System.out.println("Data loaded in KD Tree");
         return root;
     }
