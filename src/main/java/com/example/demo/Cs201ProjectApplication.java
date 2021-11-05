@@ -56,14 +56,26 @@ public class Cs201ProjectApplication {
         double[] inputCoordinates = {inputData[0], inputData[1]};
         Business newBusiness = new Business("no name", "no address", inputCoordinates);
 
-        KDNode kdn = kdt.find_nearest(newBusiness);
+
+        ArrayList<KDNode> kdnList = kdt.find_nearest_list(newBusiness, inputCoordinates[0], inputCoordinates[1], inputData[2]);
+        KDNode kdn = kdt.find_nearest(newBusiness, inputCoordinates[0], inputCoordinates[1], inputData[2]);
         System.out.println("Name: " + kdn.x.getName());
 		System.out.println("Address: " + kdn.x.getAddr());
 		System.out.println("Minimum Distance: " + String.valueOf(kdt.find_nearest_distance()));
+
+        System.out.println("\nList of all nodes within the input radius: ");
+        for (KDNode node : kdnList) {
+            Business business = node.x;
+            System.out.println(business.getName());
+        }
         
     }
 
     public static void kdTreePresort() {
+        //160585
+        //10, 100, 1000, 10000, 100000, 160585 
+
+        //amount of memory occupied by the program - find a tool
         KdNodePresort root = LoadData.getRootKDTreePresort();
         double[] inputData = getInputData();
         double[] inputCoordinates = {inputData[0], inputData[1]};
