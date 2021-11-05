@@ -1,2 +1,2 @@
 
-package com.eatthepath.jvptree;
+package com.example.demo.VPT;

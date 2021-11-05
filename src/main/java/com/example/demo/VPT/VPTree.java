@@ -1,4 +1,4 @@
-package com.eatthepath.jvptree;
+package com.example.demo.VPT;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import com.eatthepath.jvptree.util.SamplingMedianDistanceThresholdSelectionStrategy;
+import com.example.demo.VPT.util.SamplingMedianDistanceThresholdSelectionStrategy;
 
 
 public class VPTree<P, E extends P> implements SpatialIndex<P, E> {

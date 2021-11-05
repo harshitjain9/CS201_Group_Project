@@ -1,10 +1,10 @@
-package com.eatthepath.jvptree.util;
+package com.example.demo.VPT.util;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.eatthepath.jvptree.DistanceFunction;
-import com.eatthepath.jvptree.ThresholdSelectionStrategy;
+import com.example.demo.VPT.DistanceFunction;
+import com.example.demo.VPT.ThresholdSelectionStrategy;
 
 
 public class SamplingMedianDistanceThresholdSelectionStrategy<P, E extends P> extends MedianDistanceThresholdSelectionStrategy<P, E> implements ThresholdSelectionStrategy<P, E> {

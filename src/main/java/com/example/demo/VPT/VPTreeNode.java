@@ -1,4 +1,4 @@
-package com.eatthepath.jvptree;
+package com.example.demo.VPT;
 
 import java.util.ArrayList;
 import java.util.Collection;

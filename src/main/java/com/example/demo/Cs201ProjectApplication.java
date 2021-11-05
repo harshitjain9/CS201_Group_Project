@@ -11,6 +11,8 @@ import org.json.simple.parser.*;
 import org.springframework.boot.SpringApplication;
 
 import com.example.demo.KD.*;
+import com.example.demo.VPT.DistFuncImpl;
+import com.example.demo.VPT.VPTree;
 import com.github.javafaker.Faker;
 import com.example.demo.LoadData;
 import com.example.demo.Distance;
@@ -90,7 +92,21 @@ public class Cs201ProjectApplication {
     }
 
     public static void vpTree() {
+        ArrayList<Business> result = LoadData.getUnsortedList();
+        //System.out.println(result.size());
+        double[] data = getInputData();
+        Business current = new Business("current", "current address", data);
         
+        VPTree<Business,Business> vpTree = new VPTree<>(new DistFuncImpl());
+        for (Business each:result) {
+            vpTree.add(each);
+        }
+
+        final List<Business> nearestShops_ = vpTree.getAllWithinDistance(current, current.getCoordinates()[2]);
+        //System.out.println(nearestShops_.size());
+        for (Business each:nearestShops_) {
+            each.printBusiness(current);
+        }
     }
 
     public static void appendJson(int n) {

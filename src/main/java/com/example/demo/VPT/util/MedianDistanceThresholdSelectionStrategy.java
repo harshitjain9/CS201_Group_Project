@@ -1,10 +1,10 @@
-package com.eatthepath.jvptree.util;
+package com.example.demo.VPT.util;
 
 import java.util.List;
 import java.util.Random;
 
-import com.eatthepath.jvptree.DistanceFunction;
-import com.eatthepath.jvptree.ThresholdSelectionStrategy;
+import com.example.demo.VPT.DistanceFunction;
+import com.example.demo.VPT.ThresholdSelectionStrategy;
 
 
 public class MedianDistanceThresholdSelectionStrategy<P, E extends P> implements ThresholdSelectionStrategy<P, E> {
@@ -32,7 +32,6 @@ public class MedianDistanceThresholdSelectionStrategy<P, E extends P> implements
         final int medianIndex = points.size() / 2;
         final Random random = new Random();
 
-        // The strategy here is to use quickselect (https://en.wikipedia.org/wiki/Quickselect) to recursively partition
         // the parts of a list on one side of a pivot, working our way toward the center of the list.
         while (left != right) {
             final int pivotIndex = left + (right - left == 0 ? 0 : random.nextInt(right - left));
