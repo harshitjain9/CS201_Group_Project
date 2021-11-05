@@ -44,6 +44,12 @@
 			<artifactId>javafaker</artifactId>
 			<version>0.12</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.eatthepath</groupId>
+			<artifactId>jvptree</artifactId>
+			<version>0.2</version>
+		</dependency>
 
 	</dependencies>
 

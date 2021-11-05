@@ -1,4 +1,12 @@
 package com.example.demo.KD;
+//normal kd tree does not work - dino working on it - 
+//kd tree with basic balance is not implemented yet - yash - DONE IN HALF AN HOUR
+//kd tree with advanced balance does not return names and addressess - DONE
+
+//mdf tree
+
+//plot graph of the time taken for each data structure with different input n- 10, 100, 1000, 10000, ...
+//look for a tool to measure space, check space taken with different input n - 10, 100, 1000, 10000, ....
 
 /*
  * Copyright (c) 2015, Russell A. Brown
@@ -35,6 +43,8 @@ package com.example.demo.KD;
 import java.lang.System;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
+
 import com.example.demo.Distance;
 import com.example.demo.Business;
 
@@ -79,21 +89,6 @@ public class KdNodePresort {
 		gtChild = null;
 	}
 	
-	/**
-	 * <p>
-	 * The {@code initializeReference} method initializes one reference array.
-	 * </p>
-	 * 
-	 * @param coordinates - an array of (x,y,z,w...) coordinates
-	 * @param reference - an array of references to the (x,y,z,w...) coordinates
-	 * @param i - the index of the most significant coordinate in the super key
-	 */
-	private static void initializeReference(final double[][] coordinates,
-			final double[][] reference, final int i) {
-		for (int j = 0; j < reference.length; j++) {
-			reference[j] = coordinates[j];
-		}
-	}
 
 	/**
 	 * <p>
@@ -132,7 +127,7 @@ public class KdNodePresort {
 	 * @param high - the high index of the region of reference to sort
 	 * @param p - the sorting partition (x, y, z, w...)
 	 */
-	private static void mergeSort(final double[][] reference, final double[][] temporary,
+	private static void mergeSort(final ArrayList<Business> reference, final ArrayList<Business> temporary,
 			final int low, final int high, final int p) {
 
 		int i, j, k;
@@ -151,14 +146,13 @@ public class KdNodePresort {
 
 			// Merge the results of this level of subdivision.
 			for (i = mid + 1; i > low; i--) {
-				temporary[i - 1] = reference[i - 1];
+				temporary.set(i-1, reference.get(i-1));
 			}
 			for (j = mid; j < high; j++) {
-				temporary[mid + (high - j)] = reference[j + 1]; // Avoid address overflow.
+				temporary.set(mid + (high - j), reference.get(j+1));
 			}
 			for (k = low; k <= high; k++) {
-				reference[k] =
-						(superKeyCompare(temporary[i], temporary[j], p) < 0) ? temporary[i++] : temporary[j--];
+				reference.set(k, (superKeyCompare(temporary.get(i).getCoordinates(), temporary.get(j).getCoordinates(), p) < 0) ? temporary.get(i++) : temporary.get(j--));
 			}
 		}
 	}
@@ -174,16 +168,16 @@ public class KdNodePresort {
 	 * @param p - the index of the most significant coordinate in the super key
 	 * @returns the address of the last element of the references array following duplicate removal
 	 */
-	private static int removeDuplicates(final double[][] reference, final int p) {
+	private static int removeDuplicates(final ArrayList<Business> reference, final int p) {
 		int end = 0;
-		for (int j = 1; j < reference.length; j++) {
-			double compare = superKeyCompare(reference[j], reference[j-1], p);
+		for (int j = 1; j < reference.size(); j++) {
+			double compare = superKeyCompare(reference.get(j).getCoordinates(), reference.get(j-1).getCoordinates(), p);
 			if (compare < 0) {
 				throw new RuntimeException( "merge sort failure: superKeyCompare(ref[" +
 						Integer.toString(j) + "], ref[" + Integer.toString(j-1) +
 						"], (" + Integer.toString(p) + ") = " + Double.toString(compare) );
 			} else if (compare > 0) {
-				reference[++end] = reference[j];
+				reference.set(++end, reference.get(j));
 			}
 		}
 		return end;
@@ -204,26 +198,26 @@ public class KdNodePresort {
 	 * @param depth - the depth in the k-d tree
 	 * @return a {@link KdNodePresort}
 	 */
-	private static KdNodePresort buildKdTree(final double[][][] references, final double[][] temporary,
+	private static KdNodePresort buildKdTree(final ArrayList<ArrayList<Business>> references, final ArrayList<Business> temporary,
 			final int start, final int end, final int depth) {
 
 		final KdNodePresort node;
 
 		// The partition cycles as x, y, z, etc.
-		final int p = depth % references.length;
+		final int p = depth % references.size();
 
 		if (end == start) {
 
 			// Only one reference is passed to this method, so store it at this level of the tree.
-			Business startBusiness = new Business("no name", "no address", references[0][start]);
+			Business startBusiness = references.get(0).get(start);
 			node = new KdNodePresort(startBusiness);
 
 		} else if (end == start + 1) {
 
 			// Two references are passed to this method in sorted order, so store the start
 			// element at this level of the tree and store the end element as the > child. 
-			Business startBusiness = new Business("no name", "no address", references[0][start]);
-			Business endBusiness = new Business("no name", "no address", references[0][end]);
+			Business startBusiness = references.get(0).get(start);
+			Business endBusiness = references.get(0).get(end);
 			node = new KdNodePresort(startBusiness);
 			node.gtChild = new KdNodePresort(endBusiness);
 			
@@ -232,9 +226,9 @@ public class KdNodePresort {
 			// Three references are passed to this method in sorted order, so
 			// store the median element at this level of the tree, store the start
 			// element as the < child and store the end element as the > child.
-			Business startBusiness = new Business("no name", "no address", references[0][start]);
-			Business startPlusOneBusiness = new Business("no name", "no address", references[0][start + 1]);
-			Business endBusiness = new Business("no name", "no address", references[0][end]);
+			Business startBusiness = references.get(0).get(start);
+			Business startPlusOneBusiness = references.get(0).get(start + 1);
+			Business endBusiness = references.get(0).get(end);
 			node = new KdNodePresort(startPlusOneBusiness);
 			node.ltChild = new KdNodePresort(startBusiness);
 			node.gtChild = new KdNodePresort(endBusiness);
@@ -249,12 +243,12 @@ public class KdNodePresort {
 				throw new RuntimeException("error in median calculation at depth = " + depth +
 					" : start = " + start + "  median = " + median + "  end = " + end);
 			}
-			Business medianBusiness = new Business("no name", "no address", references[0][median]); 
+			Business medianBusiness = references.get(0).get(median);
 			node = new KdNodePresort(medianBusiness);
 
 			// Copy a[0] to the temporary array before partitioning.
 			for (int i = start; i <= end; i++) {
-				temporary[i] = references[0][i];
+				temporary.set(i, references.get(0).get(i));
 			}
 
 			// Sweep through each of the other reference arrays in its a priori sorted order
@@ -266,17 +260,17 @@ public class KdNodePresort {
 			int upper = -1;
 			int lowerSave = -1;
 			int upperSave = -1;
-			for (int i = 1; i < references.length; i++) {
+			for (int i = 1; i < references.size(); i++) {
 				lower = start - 1;
 				upper = median;
 				for (int j = start; j <= end; j++) {
 					
 					// Process one reference array.  Compare once only.
-					final double compare = superKeyCompare(references[i][j], node.business.getCoordinates(), p);
+					final double compare = superKeyCompare(references.get(i).get(j).getCoordinates(), node.business.getCoordinates(), p);
 					if (compare < 0) {
-						references[i-1][++lower] = references[i][j];
+						references.get(i-1).set(++lower, references.get(i).get(j));
 					} else if (compare > 0) {
-						references[i-1][++upper] = references[i][j];
+						references.get(i-1).set(++upper, references.get(i).get(j));
 					}
 				}
 
@@ -311,7 +305,7 @@ public class KdNodePresort {
 			// of sorting points of any number of dimensions because explicit calling parameters
 			// would need to be passed to this method for each specific number of dimensions.
 			for (int i = start; i <= end; i++) {
-				references[references.length - 1][i] = temporary[i];
+				references.get(references.size() - 1).set(i, temporary.get(i));
 			}
 
 			// Recursively build the < branch of the tree.
@@ -384,40 +378,41 @@ public class KdNodePresort {
 	 *  
 	 * @param coordinates - the int[][] of points
 	 */
-	public static KdNodePresort createKdTree(List<Business> businesses) {
-
-
-		
+	public static KdNodePresort createKdTree(ArrayList<Business> businesses) {
 		// Declare and initialize the reference arrays.  The number of dimensions may be
 		// obtained from either coordinates[0].length or references.length.  The number
 		// of points may be obtained from either coordinates.length or references[0].length.
 		long initTime = System.currentTimeMillis();
-		final double[][][] references = new double[businesses.get(0).getCoordinates().length][businesses.size()][];
-		double[][] coordinates = new double[businesses.size()][];
-		for (int i = 0; i<businesses.size();i++) {
-			coordinates[i] = businesses.get(i).getCoordinates();
-		}
-		for (int i = 0; i < references.length; i++) {
-			initializeReference(coordinates, references[i], i);
+		final ArrayList<ArrayList<Business>> references = new ArrayList<ArrayList<Business>>(businesses.get(0).getCoordinates().length);
+		int referencesCapacity = businesses.get(0).getCoordinates().length;
+		int singleReferenceCapacity = businesses.size();
+		for (int i = 0; i < referencesCapacity ;i++) {
+			references.add(new ArrayList<Business>());
+			for (int j = 0; j < singleReferenceCapacity; j++) {
+				references.get(i).add(businesses.get(j));
+			}
 		}
 		initTime = System.currentTimeMillis() - initTime;
 		
 		// Merge sort the index arrays.
 		long sortTime = System.currentTimeMillis();
-		final double[][] temporary = new double[coordinates.length][];
-		for (int i = 0; i < references.length; i++) {
-			mergeSort(references[i], temporary, 0, coordinates.length - 1, i);
+		final ArrayList<Business> temporary = new ArrayList<Business>(businesses.size());
+		for (int i = 0; i< businesses.size();i++) {
+			temporary.add(new Business());
+		}
+		for (int i = 0; i < referencesCapacity; i++) {
+			mergeSort(references.get(i), temporary, 0, businesses.size() - 1, i);
 		}
 		sortTime = System.currentTimeMillis() - sortTime;
 		
 		// Remove references to duplicate coordinates via one pass through each reference array.
 		long removeTime = System.currentTimeMillis();
-		final int[] end = new int[references.length];
-		for (int i = 0; i < references.length; i++) {
-			end[i] = removeDuplicates(references[i], i);
+		final int[] end = new int[referencesCapacity];
+		for (int i = 0; i < referencesCapacity; i++) {
+			end[i] = removeDuplicates(references.get(i), i);
 		}
 		removeTime = System.currentTimeMillis() - removeTime;
-		
+		// System.out.println("References size " + String.valueOf(referencesCapacity));
 		// Check that the same number of references was removed from each reference array.
 		for (int i = 0; i < end.length - 1; i++) {
 			for (int j = i + 1; j < end.length; j++) {
@@ -448,6 +443,28 @@ public class KdNodePresort {
 		
 		// Return the root of the tree.
 		return root;
+	}
+
+	/**
+	 * <p>
+	 * The {@code printTuple} method prints a tuple.
+	 * </p>
+	 * 
+	 * @param p - the tuple
+	 */
+	public static void printTuple(final double[] p) {
+		System.out.print("(");
+		for (int i = 0; i < p.length; i++) {
+			System.out.println(p[i]);
+			if (i < (p.length - 1)) {
+				System.out.println(", ");
+			}
+		}
+		System.out.print(")");
+	}
+
+	public double[] getPoint() {
+		return business.getCoordinates();
 	}
 
 	/**
@@ -513,46 +530,24 @@ public class KdNodePresort {
 	}
 
 
-	/**
-	 * <p>
-	 * The {@code printKdTree} method prints the k-d tree "sideways" with the root at the left.
-	 * </p>
-	 */
-	public void printKdTree(final int depth) {
-		if (gtChild != null) {
-			gtChild.printKdTree(depth+1);
-		}
-		for (int i = 0; i < depth; i++) {
-			System.out.print("         ");
-		}
-		printTuple(business.getCoordinates());
-		System.out.println();
-		// if (ltChild != null) {
-		// 	ltChild.printKdTree(depth+1);
-		// }
-	}
-
-	/**
-	 * <p>
-	 * The {@code printTuple} method prints a tuple.
-	 * </p>
-	 * 
-	 * @param p - the tuple
-	 */
-	public static void printTuple(final double[] p) {
-		System.out.print("(");
-		for (int i = 0; i < p.length; i++) {
-			System.out.println(p[i]);
-			if (i < (p.length - 1)) {
-				System.out.println(", ");
-			}
-		}
-		System.out.print(")");
-	}
-
-	public double[] getPoint() {
-		return business.getCoordinates();
-	}
+	// /**
+	//  * <p>
+	//  * The {@code printKdTree} method prints the k-d tree "sideways" with the root at the left.
+	//  * </p>
+	//  */
+	// public void printKdTree(final int depth) {
+	// 	// if (gtChild != null) {
+	// 	// 	gtChild.printKdTree(depth+1);
+	// 	// }
+	// 	// for (int i = 0; i < depth; i++) {
+	// 	// 	System.out.print("         ");
+	// 	// }
+	// 	// printTuple(business.getCoordinates());
+	// 	// System.out.println();
+	// 	// if (ltChild != null) {
+	// 	// 	ltChild.printKdTree(depth+1);
+	// 	// }
+	// }
 }
 
 /**
@@ -598,10 +593,150 @@ public class KdNodePresort {
 // }
 
 
-//normal kd tree does not work - dino working on it
-//kd tree with basic balance is not implemented yet - yash
-//kd tree with advanced balance does not return names and addressess 
 
-//plot graph of the time taken for each data structure with different input n- 10, 100, 1000, 10000, ...
-//look for a tool to measure space, check space taken with different input n - 10, 100, 1000, 10000, ....
 
+
+	// /**
+	//  * <p>
+	//  * Build a k-d tree by recursively partitioning the reference arrays and adding nodes to the tree.
+	//  * These arrays are permuted cyclically for successive levels of the tree in order that sorting use
+	//  * x, y, z, etc. as the most significant portion of the sorting or partitioning key.  The contents
+	//  * of the reference arrays are scrambled by each recursive partitioning.
+	//  * </p>
+	//  *
+	//  * @param references - arrays of references to the (x,y,z,w...) coordinates
+	//  * @param temporary - a scratch array into which to copy references
+	//  * @param start - the first element of the reference array a
+	//  * @param end - the last element of the reference array a
+	//  * @param depth - the depth in the k-d tree
+	//  * @return a {@link KdNodePresort}
+	//  */
+	// private static KdNodePresort buildKdTree(final double[][][] references, final double[][] temporary,
+	// 		final int start, final int end, final int depth) {
+
+	// 	final KdNodePresort node;
+
+	// 	// The partition cycles as x, y, z, etc.
+	// 	final int p = depth % references.length;
+
+	// 	if (end == start) {
+
+	// 		// Only one reference is passed to this method, so store it at this level of the tree.
+	// 		Business startBusiness = new Business("no name", "no address", references[0][start]);
+	// 		node = new KdNodePresort(startBusiness);
+
+	// 	} else if (end == start + 1) {
+
+	// 		// Two references are passed to this method in sorted order, so store the start
+	// 		// element at this level of the tree and store the end element as the > child. 
+	// 		Business startBusiness = new Business("no name", "no address", references[0][start]);
+	// 		Business endBusiness = new Business("no name", "no address", references[0][end]);
+	// 		node = new KdNodePresort(startBusiness);
+	// 		node.gtChild = new KdNodePresort(endBusiness);
+			
+	// 	} else if (end == start + 2) {
+			
+	// 		// Three references are passed to this method in sorted order, so
+	// 		// store the median element at this level of the tree, store the start
+	// 		// element as the < child and store the end element as the > child.
+	// 		Business startBusiness = new Business("no name", "no address", references[0][start]);
+	// 		Business startPlusOneBusiness = new Business("no name", "no address", references[0][start + 1]);
+	// 		Business endBusiness = new Business("no name", "no address", references[0][end]);
+	// 		node = new KdNodePresort(startPlusOneBusiness);
+	// 		node.ltChild = new KdNodePresort(startBusiness);
+	// 		node.gtChild = new KdNodePresort(endBusiness);
+			
+	// 	} else if (end > start + 2) {
+			
+	// 		// Four or more references are passed to this method.  Partitioning of the other reference
+	// 		// arrays will occur about the median element of references[0].  Avoid overflow when
+	// 		// calculating the median.  Store the median element of references[0] in a new k-d node.
+	// 		final int median = start + ( (end - start) >> 1 );
+	// 		if (median <= start || median >= end) {
+	// 			throw new RuntimeException("error in median calculation at depth = " + depth +
+	// 				" : start = " + start + "  median = " + median + "  end = " + end);
+	// 		}
+	// 		Business medianBusiness = new Business("no name", "no address", references[0][median]); 
+	// 		node = new KdNodePresort(medianBusiness);
+
+	// 		// Copy a[0] to the temporary array before partitioning.
+	// 		for (int i = start; i <= end; i++) {
+	// 			temporary[i] = references[0][i];
+	// 		}
+
+	// 		// Sweep through each of the other reference arrays in its a priori sorted order
+	// 		// and partition it into "less than" and "greater than" halves by comparing
+	// 		// super keys.  Store the result from references[i] in references[i-1], thus
+	// 		// permuting the reference arrays.  Skip the element of references[i] that
+	// 		// references a point that equals the point that is stored in the new k-d node.
+	// 		int lower = -1;
+	// 		int upper = -1;
+	// 		int lowerSave = -1;
+	// 		int upperSave = -1;
+	// 		for (int i = 1; i < references.length; i++) {
+	// 			lower = start - 1;
+	// 			upper = median;
+	// 			for (int j = start; j <= end; j++) {
+					
+	// 				// Process one reference array.  Compare once only.
+	// 				final double compare = superKeyCompare(references[i][j], node.business.getCoordinates(), p);
+	// 				if (compare < 0) {
+	// 					references[i-1][++lower] = references[i][j];
+	// 				} else if (compare > 0) {
+	// 					references[i-1][++upper] = references[i][j];
+	// 				}
+	// 			}
+
+	// 			// Check the new indices for the reference array.
+	// 			if (lower != median - 1) {
+	// 				throw new RuntimeException("incorrect range for lower at depth - " + depth +
+	// 						" : first = " + start + "  lower = " + lower + "  median = " + median);
+	// 			}
+
+	// 			if (upper != end) {
+	// 				throw new RuntimeException("incorrect range for upper at depth = " + depth +
+	// 						" : median = " + median + "  upper = " + upper + "  end = " + end);
+	// 			}
+	// 			if (i > 1 && lower != lowerSave) {
+	// 				throw new RuntimeException("lower = " + lower + "  !=  lowerSave = " + lowerSave);
+	// 			}
+
+	// 			if (i > 1 && upper != upperSave) {
+	// 				throw new RuntimeException("upper = " + upper + "  !=  upperSave = " + upperSave);
+	// 			}
+
+	// 			lowerSave = lower;
+	// 			upperSave = upper;
+	// 		}
+
+	// 		// Copy the temporary array to the last reference array to finish permutation.  The copies to
+	// 		// and from the temporary array produce the O((k+1)n log n)  term of the computational
+	// 		// complexity.  This term may be reduced to a O((k-1)n log n) term for (x,y,z) coordinates
+	// 		// by eliminating these copies and explicitly passing x, y, z and t (temporary) arrays to this
+	// 		// buildKdTree method, then copying t<-x, x<-y and y<-z, then explicitly passing x, y, t and z
+	// 		// to the next level of recursion.  However, this approach would sacrifice the generality
+	// 		// of sorting points of any number of dimensions because explicit calling parameters
+	// 		// would need to be passed to this method for each specific number of dimensions.
+	// 		for (int i = start; i <= end; i++) {
+	// 			references[references.length - 1][i] = temporary[i];
+	// 		}
+
+	// 		// Recursively build the < branch of the tree.
+	// 		node.ltChild = buildKdTree(references, temporary, start, lower, depth + 1);
+
+	// 		// Recursively build the > branch of the tree.
+	// 		node.gtChild = buildKdTree(references, temporary, median + 1, upper, depth + 1);
+			
+	// 	} else 	if (end < start) {
+			
+	// 		// This is an illegal condition that should never occur, so test for it last.
+	// 		throw new RuntimeException("end < start");
+			
+	// 	} else {
+			
+	// 		// This final else block is added to keep the Java compiler from complaining.
+	// 		throw new RuntimeException("unknown configuration of  start and end");
+	// 	}
+		
+	// 	return node;
+	// }
