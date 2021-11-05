@@ -71,12 +71,12 @@ public class Cs201ProjectApplication {
         
     }
 
-    public static void kdTreePresort() {
+    public static void kdTreePresort(int n) {
         //160585
         //10, 100, 1000, 10000, 100000, 160585 
 
         //amount of memory occupied by the program - find a tool
-        KdNodePresort root = LoadData.getRootKDTreePresort();
+        KdNodePresort root = LoadData.getRootKDTreePresort(n);
         double[] inputData = getInputData();
         double[] inputCoordinates = {inputData[0], inputData[1]};
         double inputRadius = inputData[2];
@@ -111,7 +111,9 @@ public class Cs201ProjectApplication {
                     spacePartitioning();
                 } else if (algorthimNumber == 3) {
                     validNumber = true;
-                    kdTreePresort();
+                    System.out.println("Enter the value of n:");
+                    int iterNum = Integer.parseInt(scanner.nextLine());
+                    kdTreePresort(iterNum);
                 } else {
                     continue;
                 }

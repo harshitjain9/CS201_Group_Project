@@ -7,13 +7,13 @@ import com.example.demo.KD.KDTree;
 import com.example.demo.KD.KdNodePresort;
 
 public class LoadData {
-
+	private static String path = "./yelp_academic_dataset_business.json";
     public static ArrayList<Business> getUnsortedList(){
 		System.out.println("Loading data in unsorted list..");
         ArrayList<Business> allData = new ArrayList<>();
 		JSONParser parser = new JSONParser();
 		String line;
-		try (BufferedReader reader = new BufferedReader(new FileReader("./yelp_academic_dataset_business.json"))) {
+		try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
 			while ((line = reader.readLine()) != null) {
 				JSONObject jsonObject = (JSONObject) parser.parse(line);
 				double latitude = (double) jsonObject.get("latitude");
@@ -38,7 +38,7 @@ public class LoadData {
 		String line;
 		int numpoints = 160585;
 		KDTree kdt = new KDTree(numpoints);
-		try (BufferedReader reader = new BufferedReader(new FileReader("./yelp_academic_dataset_business.json"))) {
+		try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
 			while ((line = reader.readLine()) != null) {
 				JSONObject jsonObject = (JSONObject) parser.parse(line);
 				double latitude = (double) jsonObject.get("latitude");
@@ -63,7 +63,7 @@ public class LoadData {
         ArrayList<Business> allData = new ArrayList<>();
 		JSONParser parser = new JSONParser();
 		String line;
-		try (BufferedReader reader = new BufferedReader(new FileReader("./yelp_academic_dataset_business.json"))) {
+		try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
 			while ((line = reader.readLine()) != null) {
 				JSONObject jsonObject = (JSONObject) parser.parse(line);
 				double latitude = (double) jsonObject.get("latitude");
@@ -89,8 +89,8 @@ public class LoadData {
 		JSONParser parser = new JSONParser();
 		String line;
 		int walk = 0;
-		try (BufferedReader reader = new BufferedReader(new FileReader("./yelp_academic_dataset_business.json"))) {
-			while ((line = reader.readLine()) != null) {
+		try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
+			while (walk < n && (line = reader.readLine()) != null) {
 				JSONObject jsonObject = (JSONObject) parser.parse(line);
 				double latitude = (double) jsonObject.get("latitude");
 				double longitude = (double) jsonObject.get("longitude");
