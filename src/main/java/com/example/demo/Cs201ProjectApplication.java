@@ -85,15 +85,16 @@ public class Cs201ProjectApplication {
 		}
         endTime = System.currentTimeMillis();
         long searchingListTime = endTime - startTime;
-        System.out.println("n = " + String.valueOf(n));
-        System.out.println("Time to create list: " + String.valueOf(creatingListTime));
-        System.out.println("Time to search the list: " + String.valueOf(searchingListTime));
-        System.out.println("Memory used: " + String.valueOf(actualMemUsed));
         if (print) {
             for (Business business: resultList) {
                 business.printBusiness(inputCoordinates);
             }
-        }   
+        }  
+        System.out.println("n = " + String.valueOf(n));
+        System.out.println("Time to create list: " + String.valueOf(creatingListTime));
+        System.out.println("Time to search the list: " + String.valueOf(searchingListTime));
+        System.out.println("Memory used: " + String.valueOf(actualMemUsed));
+ 
 	}
 
     public static void spacePartitioning(boolean print, boolean dummy, int n) {
@@ -117,16 +118,17 @@ public class Cs201ProjectApplication {
         List<KDNode> kdNodes = kdt.searchKdTree(inputCoordinates, inputRadius, 0, kdt.Root);
         endTime = System.currentTimeMillis();
         long searchingListTime = endTime - startTime;
-        System.out.println("n = " + String.valueOf(n));
-        System.out.println("Time to create tree: " + String.valueOf(creatingListTime));
-        System.out.println("Time to search the tree: " + String.valueOf(searchingListTime));
-        System.out.println("Memory used: " + String.valueOf(actualMemUsed));
         if (print) {
             for (int i = 0; i < kdNodes.size(); i++) {
                 KDNode node = kdNodes.get(i);
                 node.x.printBusiness(inputCoordinates);
             }
         }
+        System.out.println("n = " + String.valueOf(n));
+        System.out.println("Time to create tree: " + String.valueOf(creatingListTime));
+        System.out.println("Time to search the tree: " + String.valueOf(searchingListTime));
+        System.out.println("Memory used: " + String.valueOf(actualMemUsed));
+
     }
 
     public static void kdTreePresort(boolean print, boolean dummy, int n) {
@@ -150,16 +152,17 @@ public class Cs201ProjectApplication {
         List<KdNodePresort> kdNodes = root.searchKdTree(inputCoordinates, inputRadius, 0);
         endTime = System.currentTimeMillis();
         long searchingListTime = endTime - startTime;
-        System.out.println("n = " + String.valueOf(n));
-        System.out.println("Time to create tree: " + String.valueOf(creatingListTime));
-        System.out.println("Time to search the tree: " + String.valueOf(searchingListTime));
-        System.out.println("Memory used: " + String.valueOf(actualMemUsed));
         if (print) {
             for (int i = 0; i < kdNodes.size(); i++) {
                 KdNodePresort node = kdNodes.get(i);
                 node.business.printBusiness(inputCoordinates);
             }
         }
+        System.out.println("n = " + String.valueOf(n));
+        System.out.println("Time to create tree: " + String.valueOf(creatingListTime));
+        System.out.println("Time to search the tree: " + String.valueOf(searchingListTime));
+        System.out.println("Memory used: " + String.valueOf(actualMemUsed));
+
     }
 
     public static void kdTreePartition(boolean print, boolean dummy, int n) {
@@ -183,16 +186,17 @@ public class Cs201ProjectApplication {
         List<KdNodePartition> kdNodes = root.searchKdTree(inputCoordinates, inputRadius, 0);
         endTime = System.currentTimeMillis();
         long searchingListTime = endTime - startTime;
-        System.out.println("n = " + String.valueOf(n));
-        System.out.println("Time to create tree: " + String.valueOf(creatingListTime));
-        System.out.println("Time to search the tree: " + String.valueOf(searchingListTime));
-        System.out.println("Memory used: " + String.valueOf(actualMemUsed));
         if (print) {
             for (int i = 0; i < kdNodes.size(); i++) {
                 KdNodePartition node = kdNodes.get(i);
                 node.business.printBusiness(inputCoordinates);
             }
         }
+        System.out.println("n = " + String.valueOf(n));
+        System.out.println("Time to create tree: " + String.valueOf(creatingListTime));
+        System.out.println("Time to search the tree: " + String.valueOf(searchingListTime));
+        System.out.println("Memory used: " + String.valueOf(actualMemUsed));
+
     }
 
     public static void vpTree(boolean print, boolean dummy, int n) {
@@ -221,20 +225,21 @@ public class Cs201ProjectApplication {
         final List<Business> nearestShops_ = vpTree.getAllWithinDistance(current, current.getCoordinates()[2]);
         endTime = System.currentTimeMillis();
         long searchingListTime = endTime - startTime;
-        System.out.println("n = " + String.valueOf(n));
-        System.out.println("Time to create tree: " + String.valueOf(creatingListTime));
-        System.out.println("Time to search the tree: " + String.valueOf(searchingListTime));
-        System.out.println("Memory used: " + String.valueOf(actualMemUsed));
         if (print) {
             for (Business each:nearestShops_) {
                 each.printBusiness(current.getCoordinates());
             }
         }
+        System.out.println("n = " + String.valueOf(n));
+        System.out.println("Time to create tree: " + String.valueOf(creatingListTime));
+        System.out.println("Time to search the tree: " + String.valueOf(searchingListTime));
+        System.out.println("Memory used: " + String.valueOf(actualMemUsed));
     }
  
 	public static void main(String[] args) {
 		SpringApplication.run(Cs201ProjectApplication.class, args);
-        int[] nList = {10, 100, 1000, 10000, 100000, 1000000};
+        // int[] nList = {10, 100, 1000, 10000, 100000, 1000000};
+        int[] nList = {1000000};
         System.out.println("Number: Algorithm");
         System.out.println("1: Linear Search");
         System.out.println("2: Normal, unbalanced KD Tree");
@@ -248,30 +253,50 @@ public class Cs201ProjectApplication {
             try {
                 System.out.println("Enter the algorithm number:");
                 algorthimNumber = Integer.parseInt(scanner.nextLine());
+                int dummy = -1;
+                while (dummy!= 0 && dummy!= 1) {
+                    System.out.println("Do you want to test with dummy input coordinates? Enter 1 for Yes and 0 for No:");
+                    dummy = Integer.parseInt(scanner.nextLine());
+                }
+                boolean dummyBool = false;
+                if (dummy == 1) {
+                    dummyBool = true;
+                }
+                int print = -1;
+                while (print!= 0 && print!= 1) {
+                    System.out.println("Do you want to print the businesses? Enter 1 for Yes and 0 for No:");
+                    print = Integer.parseInt(scanner.nextLine());
+                }
+                boolean printBool = false;
+                if (print == 1) {
+                    printBool = true;
+                }
+                System.out.println("dummy" + String.valueOf(dummyBool));
+                System.out.println("print" + String.valueOf(printBool));
                 if (algorthimNumber == 1) {
                     validNumber = true;
                     for (int n: nList) {
-                        linearSearch(false,  true, n);
+                        linearSearch(printBool,  dummyBool, n);
                     }
                 } else if (algorthimNumber == 2) {
                     validNumber = true;
                     for (int n: nList) {
-                        spacePartitioning(false,  true, n);
+                        spacePartitioning(true,  false, n);
                     }
                 } else if (algorthimNumber == 3) {
                     validNumber = true;
                     for (int n: nList) {
-                        kdTreePartition(false,  true, n);
+                        kdTreePartition(printBool,  dummyBool, n);
                     }
                 } else if (algorthimNumber == 4) {
                     validNumber = true;
                     for (int n: nList) {
-                        kdTreePresort(false,  true, n);
+                        kdTreePresort(printBool,  dummyBool, n);
                     }
                 } else if (algorthimNumber == 5) {
                     validNumber = true;
                     for (int n: nList) {
-                        kdTreePresort(true,  true, n);
+                        kdTreePresort(printBool,  dummyBool, n);
                     }
                 } 
                 // else if (algorthimNumber == 6) {
