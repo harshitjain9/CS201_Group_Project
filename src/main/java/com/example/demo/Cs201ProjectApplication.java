@@ -222,7 +222,7 @@ public class Cs201ProjectApplication {
         }
         Business current = new Business("current", "current address", inputCoordinates);
         startTime = System.currentTimeMillis();
-        final List<Business> nearestShops_ = vpTree.getAllWithinDistance(current, current.getCoordinates()[2]);
+        final List<Business> nearestShops_ = vpTree.getAllWithinDistance(current, inputRadius);
         endTime = System.currentTimeMillis();
         long searchingListTime = endTime - startTime;
         if (print) {
@@ -240,12 +240,12 @@ public class Cs201ProjectApplication {
 		SpringApplication.run(Cs201ProjectApplication.class, args);
         // int[] nList = {10, 100, 1000, 10000, 100000, 1000000};
         int[] nList = {1000000};
-        System.out.println("Number: Algorithm");
-        System.out.println("1: Linear Search");
+        System.out.println("Number: Data Structure");
+        System.out.println("1: Unsorted List (Linear Search/Brute Force)");
         System.out.println("2: Normal, unbalanced KD Tree");
-        System.out.println("3: Balanced KD Tree (Recursive Partioning)");
+        System.out.println("3: Balanced KD Tree (Recursive Partitioning)");
         System.out.println("4: Balanced KD Tree (Presort)");
-        System.out.println("5: Vantage Point Tree Partition Search");
+        System.out.println("5: Vantage Point Tree");
         Scanner scanner = new Scanner(System.in);
         boolean validNumber = false;
         int algorthimNumber = 1;
@@ -279,7 +279,7 @@ public class Cs201ProjectApplication {
                 } else if (algorthimNumber == 2) {
                     validNumber = true;
                     for (int n: nList) {
-                        spacePartitioning(true,  false, n);
+                        spacePartitioning(printBool,  dummyBool, n);
                     }
                 } else if (algorthimNumber == 3) {
                     validNumber = true;
@@ -294,7 +294,7 @@ public class Cs201ProjectApplication {
                 } else if (algorthimNumber == 5) {
                     validNumber = true;
                     for (int n: nList) {
-                        kdTreePresort(printBool,  dummyBool, n);
+                        vpTree(printBool,  dummyBool, n);
                     }
                 } 
                 // else if (algorthimNumber == 6) {
