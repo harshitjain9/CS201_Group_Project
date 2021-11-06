@@ -12,6 +12,9 @@ import com.github.javafaker.Faker;
 import org.springframework.boot.SpringApplication;
 
 import com.example.demo.KD.*;
+import com.example.demo.VPT.DistFuncImpl;
+import com.example.demo.VPT.VPTree;
+import com.github.javafaker.Faker;
 import com.example.demo.LoadData;
 import com.example.demo.Distance;
 
@@ -58,7 +61,7 @@ public class Cs201ProjectApplication {
 	public static void linearSearch(boolean print, boolean dummy, int n) {
         long beforeUsedMem=Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory();
         long startTime = System.currentTimeMillis();
-		ArrayList<Business> allData = LoadData.getUnsortedList();
+		ArrayList<Business> allData = LoadData.getUnsortedList(n);
         long endTime = System.currentTimeMillis();
         long afterUsedMem=Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory();
         long actualMemUsed=afterUsedMem-beforeUsedMem;
@@ -96,7 +99,7 @@ public class Cs201ProjectApplication {
     public static void spacePartitioning(boolean print, boolean dummy, int n) {
         long beforeUsedMem=Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory();
         long startTime = System.currentTimeMillis();
-        KDTree kdt = LoadData.getKDTree();
+        KDTree kdt = LoadData.getKDTree(n);
         long endTime = System.currentTimeMillis();
         long afterUsedMem=Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory();
         long actualMemUsed=afterUsedMem-beforeUsedMem;
@@ -115,8 +118,8 @@ public class Cs201ProjectApplication {
         endTime = System.currentTimeMillis();
         long searchingListTime = endTime - startTime;
         System.out.println("n = " + String.valueOf(n));
-        System.out.println("Time to create list: " + String.valueOf(creatingListTime));
-        System.out.println("Time to search the list: " + String.valueOf(searchingListTime));
+        System.out.println("Time to create tree: " + String.valueOf(creatingListTime));
+        System.out.println("Time to search the tree: " + String.valueOf(searchingListTime));
         System.out.println("Memory used: " + String.valueOf(actualMemUsed));
         if (print) {
             for (int i = 0; i < kdNodes.size(); i++) {
@@ -148,8 +151,8 @@ public class Cs201ProjectApplication {
         endTime = System.currentTimeMillis();
         long searchingListTime = endTime - startTime;
         System.out.println("n = " + String.valueOf(n));
-        System.out.println("Time to create list: " + String.valueOf(creatingListTime));
-        System.out.println("Time to search the list: " + String.valueOf(searchingListTime));
+        System.out.println("Time to create tree: " + String.valueOf(creatingListTime));
+        System.out.println("Time to search the tree: " + String.valueOf(searchingListTime));
         System.out.println("Memory used: " + String.valueOf(actualMemUsed));
         if (print) {
             for (int i = 0; i < kdNodes.size(); i++) {
@@ -162,7 +165,7 @@ public class Cs201ProjectApplication {
     public static void kdTreePartition(boolean print, boolean dummy, int n) {
         long beforeUsedMem=Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory();
         long startTime = System.currentTimeMillis();
-        KdNodePartition root = LoadData.getRootKDTreePartition();
+        KdNodePartition root = LoadData.getRootKDTreePartition(n);
         long endTime = System.currentTimeMillis();
         long afterUsedMem=Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory();
         long actualMemUsed=afterUsedMem-beforeUsedMem;
@@ -181,13 +184,50 @@ public class Cs201ProjectApplication {
         endTime = System.currentTimeMillis();
         long searchingListTime = endTime - startTime;
         System.out.println("n = " + String.valueOf(n));
-        System.out.println("Time to create list: " + String.valueOf(creatingListTime));
-        System.out.println("Time to search the list: " + String.valueOf(searchingListTime));
+        System.out.println("Time to create tree: " + String.valueOf(creatingListTime));
+        System.out.println("Time to search the tree: " + String.valueOf(searchingListTime));
         System.out.println("Memory used: " + String.valueOf(actualMemUsed));
         if (print) {
             for (int i = 0; i < kdNodes.size(); i++) {
                 KdNodePartition node = kdNodes.get(i);
                 node.business.printBusiness(inputCoordinates);
+            }
+        }
+    }
+
+    public static void vpTree(boolean print, boolean dummy, int n) {
+        long beforeUsedMem=Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory();
+        long startTime = System.currentTimeMillis();
+        ArrayList<Business> result = LoadData.getUnsortedList(160585);
+        VPTree<Business,Business> vpTree = new VPTree<>(new DistFuncImpl());
+        for (Business each:result) {
+            vpTree.add(each);
+        }
+        long endTime = System.currentTimeMillis();
+        long afterUsedMem=Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory();
+        long actualMemUsed=afterUsedMem-beforeUsedMem;
+        long creatingListTime = endTime - startTime;
+        double[] inputData = {40.0, -82.0, 10};
+        double[] inputCoordinates = {inputData[0], inputData[1]};
+        double inputRadius = inputData[2];
+        if (!dummy) {
+            inputData = getInputData();
+            inputCoordinates[0] = inputData[0];
+            inputCoordinates[1] = inputData[1];
+            inputRadius = inputData[2];
+        }
+        Business current = new Business("current", "current address", inputCoordinates);
+        startTime = System.currentTimeMillis();
+        final List<Business> nearestShops_ = vpTree.getAllWithinDistance(current, current.getCoordinates()[2]);
+        endTime = System.currentTimeMillis();
+        long searchingListTime = endTime - startTime;
+        System.out.println("n = " + String.valueOf(n));
+        System.out.println("Time to create tree: " + String.valueOf(creatingListTime));
+        System.out.println("Time to search the tree: " + String.valueOf(searchingListTime));
+        System.out.println("Memory used: " + String.valueOf(actualMemUsed));
+        if (print) {
+            for (Business each:nearestShops_) {
+                each.printBusiness(current.getCoordinates());
             }
         }
     }
@@ -197,9 +237,10 @@ public class Cs201ProjectApplication {
         int[] nList = {10, 100, 1000, 10000, 100000, 1000000};
         System.out.println("Number: Algorithm");
         System.out.println("1: Linear Search");
-        System.out.println("2: Space Partioning using KD Tree");
-        System.out.println("3: Space Partioning using Balanced KD Tree- Partition");
-        System.out.println("4: Space Partioning using Balanced KD Tree- Presort");
+        System.out.println("2: Normal, unbalanced KD Tree");
+        System.out.println("3: Balanced KD Tree (Recursive Partioning)");
+        System.out.println("4: Balanced KD Tree (Presort)");
+        System.out.println("5: Vantage Point Tree Partition Search");
         Scanner scanner = new Scanner(System.in);
         boolean validNumber = false;
         int algorthimNumber = 1;
@@ -229,8 +270,15 @@ public class Cs201ProjectApplication {
                     }
                 } else if (algorthimNumber == 5) {
                     validNumber = true;
-                    appendJson(1000010 - 160585);
-                } else {
+                    for (int n: nList) {
+                        kdTreePresort(true,  true, n);
+                    }
+                } 
+                // else if (algorthimNumber == 6) {
+                //     validNumber = true;
+                //     appendJson(1000010 - 160585);
+                // } 
+                else {
                     continue;
                 }
             } catch (NumberFormatException e) {

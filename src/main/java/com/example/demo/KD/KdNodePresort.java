@@ -3,8 +3,6 @@ package com.example.demo.KD;
 import java.lang.System;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.ReentrantLock;
-
 import com.example.demo.Distance;
 import com.example.demo.Business;
 
@@ -19,6 +17,21 @@ public class KdNodePresort {
 		gtChild = null;
 	}
 	
+	/**
+	 * <p>
+	 * The {@code initializeReference} method initializes one reference array.
+	 * </p>
+	 * 
+	 * @param coordinates - an array of (x,y,z,w...) coordinates
+	 * @param reference - an array of references to the (x,y,z,w...) coordinates
+	 * @param i - the index of the most significant coordinate in the super key
+	 */
+	private static void initializeReference(final double[][] coordinates,
+			final double[][] reference, final int i) {
+		for (int j = 0; j < reference.length; j++) {
+			reference[j] = coordinates[j];
+		}
+	}
 
 	private static double superKeyCompare(final double[] a, final double[] b, final int p) {
 		double diff = 0;
@@ -208,8 +221,7 @@ public class KdNodePresort {
 			}
 		}
 		initTime = System.currentTimeMillis() - initTime;
-		
-		long sortTime = System.currentTimeMillis();
+				long sortTime = System.currentTimeMillis();
 		final ArrayList<Business> temporary = new ArrayList<Business>(businesses.size());
 		for (int i = 0; i< businesses.size();i++) {
 			temporary.add(new Business());
@@ -225,7 +237,6 @@ public class KdNodePresort {
 			end[i] = removeDuplicates(references.get(i), i);
 		}
 		removeTime = System.currentTimeMillis() - removeTime;
-
 		for (int i = 0; i < end.length - 1; i++) {
 			for (int j = i + 1; j < end.length; j++) {
 				if (end[i] != end[j]) {
