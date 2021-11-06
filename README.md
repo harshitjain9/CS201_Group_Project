@@ -2,7 +2,7 @@
 
 Java Implementations of Unsorted List (Brute Force), Unbalanced KD Tree, Balanced KD Tree- Recursive Partioning, Balanced KD Tree- Presorting, and Vantage Point Trees to find the businesses within a cutoff distance in **both** dimensions of the xy plane from an input coordinate. 
 
-To run the program, follow these instructions:
+a) To run the program, follow these instructions:
 
 1. Place `yelp_academic_dataset_business.json` in `/CS201_Group_Project`. 
 
@@ -12,4 +12,7 @@ The json file contains 160,585 original businesses (businesses in the original `
 
 3. Follow the command line instructions. 
 
-4. If you want to change the input size n (number of businesses used from `yelp_academic_dataset_business.json` stored in the data structure), change the `nList` in the `main` function of `/CS201_Group_Project/Cs201ProjectApplication.java`. 
+
+b) If you want to change the input size n (number of businesses used from `yelp_academic_dataset_business.json` stored in the data structure), change the `nList` in the `main` function of `/CS201_Group_Project/Cs201ProjectApplication.java`. 
+
+c) If you want to add more randomly generated businesses in `yelp_academic_dataset_business.json`, call the `appendJson` function in `/CS201_Group_Project/Cs201ProjectApplication.java`. 
