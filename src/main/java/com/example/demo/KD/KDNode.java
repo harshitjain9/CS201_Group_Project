@@ -3,6 +3,9 @@ package com.example.demo.KD;
 import com.example.demo.Business;
 import com.example.demo.Distance;
 
+import java.util.List;
+import java.util.ArrayList;
+
 public class KDNode
 {
     int axis;
@@ -44,7 +47,6 @@ public class KDNode
  
     public KDNode Insert(Business p)
     {
-        //x = new double[2];
         KDNode parent = FindParent(p);
         if (equal(p, parent.x, 2) == true)
             return null;
@@ -65,6 +67,7 @@ public class KDNode
  
         return newNode;
     }
+
  
     boolean equal(Business x1, Business x2, int dim)
     {
