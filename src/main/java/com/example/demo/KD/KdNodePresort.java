@@ -17,21 +17,6 @@ public class KdNodePresort {
 		gtChild = null;
 	}
 	
-	/**
-	 * <p>
-	 * The {@code initializeReference} method initializes one reference array.
-	 * </p>
-	 * 
-	 * @param coordinates - an array of (x,y,z,w...) coordinates
-	 * @param reference - an array of references to the (x,y,z,w...) coordinates
-	 * @param i - the index of the most significant coordinate in the super key
-	 */
-	private static void initializeReference(final double[][] coordinates,
-			final double[][] reference, final int i) {
-		for (int j = 0; j < reference.length; j++) {
-			reference[j] = coordinates[j];
-		}
-	}
 
 	private static double superKeyCompare(final double[] a, final double[] b, final int p) {
 		double diff = 0;
