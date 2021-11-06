@@ -271,8 +271,6 @@ public class Cs201ProjectApplication {
                 if (print == 1) {
                     printBool = true;
                 }
-                System.out.println("dummy" + String.valueOf(dummyBool));
-                System.out.println("print" + String.valueOf(printBool));
                 if (algorthimNumber == 1) {
                     validNumber = true;
                     for (int n: nList) {
