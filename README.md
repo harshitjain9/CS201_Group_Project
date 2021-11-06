@@ -16,3 +16,11 @@ The json file contains 160,585 original businesses (businesses in the original `
 b) If you want to change the input size n (number of businesses used from `yelp_academic_dataset_business.json` stored in the data structure), change the `nList` in the `main` function of `/CS201_Group_Project/Cs201ProjectApplication.java`. 
 
 c) If you want to add more randomly generated businesses in `yelp_academic_dataset_business.json`, call the `appendJson` function in `/CS201_Group_Project/Cs201ProjectApplication.java`. 
+
+# Acknowledgements 
+
+Our implementations used the source code from the following before we tailored it to suit our specific problem statement and dataset:
+
+1. [Building a Balanced k-d Tree in O(kn log n) Time](https://jcgt.org/published/0004/01/03/)
+2. [Jvptree](https://github.com/jchambers/jvptree)
+3. [Java Program to Find the Nearest Neighbor Using K-D Tree Search](https://www.sanfoundry.com/java-program-find-nearest-neighbour-using-k-d-tree-search/)
