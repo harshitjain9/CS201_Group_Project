@@ -11,3 +11,5 @@ The json file contains 160,585 original businesses (businesses in the original `
 2. Run the following command: `mvn spring-boot:run` at `/CS201_Group_Project`.
 
 3. Follow the command line instructions. 
+
+4. If you want to change the input size n (number of businesses used from `yelp_academic_dataset_business.json` stored in the data structure), change the `nList` in the `main` function of `/CS201_Group_Project/Cs201ProjectApplication.java`. 
